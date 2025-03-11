@@ -197,7 +197,7 @@ function App() {
 
               <div className="mt-12 pt-8 border-t">
                 <div className="flex flex-col md:flex-row justify-between items-center">
-                  <p className="text-gray-600 mb-4 md:mb-0">©2021 Bangalore Realtors. All rights reserved</p>
+                  <p className="text-gray-600 mb-4 md:mb-0">©2025 Bangalore Realtors. All rights reserved</p>
                   <div className="flex space-x-6">
                     <a href="#" className="text-gray-600 hover:text-gray-900">
                       <Instagram className="h-5 w-5" />
