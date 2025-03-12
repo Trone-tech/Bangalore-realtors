@@ -35,29 +35,29 @@ function App() {
             <div className="w-full md:w-6/12">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                 <div className="bg-gray-50 rounded-lg p-6">
-                  <div className="bg-white rounded-full w-10 h-10 flex items-center justify-center mb-4">
-                    <Shield className="w-5 h-5 text-violet-600" />
+                  <div className="bg-white rounded-full w-12 h-12 flex items-center justify-center mb-4">
+                    <img src="/assets/s1.png" alt="Property Insurance" className="w-8 h-8" />
                   </div>
                   <h3 className="text-lg font-semibold mb-2">Property Insurance</h3>
                   <p className="text-gray-600 text-sm leading-relaxed">We offer our customers property protection and liability coverage with insurance for their better life.</p>
                 </div>
                 <div className="bg-gray-50 rounded-lg p-6">
-                  <div className="bg-white rounded-full w-10 h-10 flex items-center justify-center mb-4">
-                    <Building2 className="w-5 h-5 text-violet-600" />
+                  <div className="bg-white rounded-full w-12 h-12 flex items-center justify-center mb-4">
+                    <img src="/assets/s2.png" alt="Best Price" className="w-8 h-8" />
                   </div>
                   <h3 className="text-lg font-semibold mb-2">Best Price</h3>
                   <p className="text-gray-600 text-sm leading-relaxed">Not sure what you should be charging for your property? No need to worry, let us do the numbers for you!</p>
                 </div>
                 <div className="bg-gray-50 rounded-lg p-6">
-                  <div className="bg-white rounded-full w-10 h-10 flex items-center justify-center mb-4">
-                    <Percent className="w-5 h-5 text-violet-600" />
+                  <div className="bg-white rounded-full w-12 h-12 flex items-center justify-center mb-4">
+                    <img src="/assets/s3.png" alt="Lowest Commission" className="w-8 h-8" />
                   </div>
                   <h3 className="text-lg font-semibold mb-2">Lowest Commission</h3>
                   <p className="text-gray-600 text-sm leading-relaxed">You no longer have to negotiate commissions and haggle with other agents! Only costs 2%!</p>
                 </div>
                 <div className="bg-gray-50 rounded-lg p-6">
-                  <div className="bg-white rounded-full w-10 h-10 flex items-center justify-center mb-4">
-                    <Settings className="w-5 h-5 text-violet-600" />
+                  <div className="bg-white rounded-full w-12 h-12 flex items-center justify-center mb-4">
+                    <img src="/assets/s4.png" alt="Overall Control" className="w-8 h-8" />
                   </div>
                   <h3 className="text-lg font-semibold mb-2">Overall Control</h3>
                   <p className="text-gray-600 text-sm leading-relaxed">Get a virtual tour and schedule visits before you rent or buy any properties. You get overall control.</p>
@@ -166,6 +166,67 @@ function App() {
                 </div>
               </div>
             ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Section 4 - Services */}
+      <section className="py-20 bg-[#1C1C4D] text-white">
+        <div className="container mx-auto px-4">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl md:text-4xl font-bold mb-4">
+              Sell <span className="text-[#4A3AFF]">Fast</span>, Buy <span className="text-[#4A3AFF]">Safe</span>
+            </h2>
+            <p className="text-gray-300 max-w-2xl mx-auto">
+              Whether it's selling your current home, getting financing, or buying a new home, we make it easy and efficient. The best part? you'll save a bunch of money and time with our services.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
+            {/* Service Box 1 */}
+            <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-6 hover:bg-white/15 transition-all">
+              <img src="/assets/1.png" alt="Shortlist without visit" className="w-full h-48 object-cover rounded-xl mb-6" />
+              <h3 className="text-xl font-semibold mb-3">Shortlist without visit</h3>
+              <p className="text-gray-300 text-sm mb-4">Find your property using the Search Engine to locate them on MAP & visit the property at your convenience.</p>
+              <button className="bg-[#4A3AFF] text-white px-6 py-2 rounded-lg hover:bg-[#3A2ECC] transition-colors">
+                Learn More
+              </button>
+            </div>
+
+            {/* Service Box 2 */}
+            <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-6 hover:bg-white/15 transition-all">
+              <img src="/assets/2.png" alt="Hassle-free property selling" className="w-full h-48 object-cover rounded-xl mb-6" />
+              <h3 className="text-xl font-semibold mb-3">Hassle-free property selling</h3>
+              <p className="text-gray-300 text-sm mb-4">Post your residential or commercial property, and we'll help you navigate the path to successful sales.</p>
+              <button className="bg-[#4A3AFF] text-white px-6 py-2 rounded-lg hover:bg-[#3A2ECC] transition-colors">
+                Learn More
+              </button>
+            </div>
+
+            {/* Service Box 3 */}
+            <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-6 hover:bg-white/15 transition-all">
+              <img src="/assets/3.png" alt="Get assistance" className="w-full h-48 object-cover rounded-xl mb-6" />
+              <h3 className="text-xl font-semibold mb-3">Get assistance</h3>
+              <p className="text-gray-300 text-sm mb-4">Get assistance throughout your property purchase journey till you close the deal with us.</p>
+              <button className="bg-[#4A3AFF] text-white px-6 py-2 rounded-lg hover:bg-[#3A2ECC] transition-colors">
+                Learn More
+              </button>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-16 text-center">
+            <div>
+              <h3 className="text-3xl font-bold mb-2">7.4%</h3>
+              <p className="text-gray-300">Property Return Rate</p>
+            </div>
+            <div>
+              <h3 className="text-3xl font-bold mb-2">3,856</h3>
+              <p className="text-gray-300">Property in Sell & Rent</p>
+            </div>
+            <div>
+              <h3 className="text-3xl font-bold mb-2">2,540</h3>
+              <p className="text-gray-300">Daily Completed Transactions</p>
+            </div>
           </div>
         </div>
       </section>
