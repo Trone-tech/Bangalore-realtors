@@ -1,72 +1,88 @@
-import React, { useState } from 'react';
-import { useParams } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
 import Navbar from '../components/Navbar';
-import { MapPin, Phone, Mail, Share2, Heart, School, Building2, Train, ChevronLeft, ChevronRight } from 'lucide-react';
+import { MapPin, Phone, Mail, Share2, Heart, School, Building2, Train, ChevronLeft, ChevronRight, Loader2 } from 'lucide-react';
+import { propertyService, Property } from '../services/propertyService';
 
 const PropertyDetails = () => {
   const { id } = useParams();
+  const navigate = useNavigate();
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
-  
-  const property = {
-    title: "COMMERCIAL PLOT",
-    description: "2450 sq.ft for sale located on 100 ft road 1st Block HRBR Layout Kalyan Nagar Banswadi Bangalore",
-    price: "2,095",
-    details: {
-      "Carpet Area": "2450 sq.ft",
-      "Property Age": "Commercial plot",
-      "Parking": "Yes",
-      "Facing": "East",
-      "Property Status": "For Sale",
-      "Location Status": "Residential"
-    },
-    amenities: [
-      {
-        icon: School,
-        name: "Schools",
-        distance: "0.5 km",
-        places: ["Delhi Public School", "Ryan International"]
-      },
-      {
-        icon: Building2,
-        name: "Hospitals",
-        distance: "1.2 km",
-        places: ["Apollo Hospital", "Fortis"]
-      },
-      {
-        icon: Train,
-        name: "Metro Station",
-        distance: "2 km",
-        places: ["Baiyappanahalli Metro"]
+  const [property, setProperty] = useState<Property | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+
+  useEffect(() => {
+    const loadProperty = async () => {
+      if (!id) {
+        setError('Property not found');
+        setLoading(false);
+        return;
       }
-    ],
-    address: {
-      full: "Near Delhi Public School (Behind Johnson Market), Banswadi, Bangalore, Karnataka",
-      area: "Kalyan Nagar",
-      zone: "Zone : Bangalore East"
-    },
-    images: [
-      "/assets/tentimage.png",
-      "/assets/tentimage.png",
-      "/assets/tentimage.png",
-      "/assets/tentimage.png",
-      "/assets/tentimage.png"
-    ]
-  };
+
+      try {
+        const propertyData = await propertyService.getPropertyById(id);
+        if (!propertyData) {
+          setError('Property not found');
+          return;
+        }
+        setProperty(propertyData);
+      } catch (error) {
+        setError('Failed to load property details');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadProperty();
+  }, [id]);
 
   const nextImage = () => {
+    if (!property?.images?.length) return;
     setCurrentImageIndex((prev) => 
       prev === property.images.length - 1 ? 0 : prev + 1
     );
   };
 
   const prevImage = () => {
+    if (!property?.images?.length) return;
     setCurrentImageIndex((prev) => 
       prev === 0 ? property.images.length - 1 : prev - 1
     );
   };
 
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <Loader2 className="h-8 w-8 animate-spin text-violet-600 mx-auto mb-4" />
+          <p className="text-gray-600">Loading property details...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (error || !property) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="bg-red-100 text-red-700 px-6 py-4 rounded-lg">
+            {error || 'Property not found'}
+          </div>
+          <button
+            onClick={() => navigate('/browse')}
+            className="mt-4 text-violet-600 hover:text-violet-700"
+          >
+            Back to Browse
+          </button>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="bg-gray-50">
+      <Navbar />
       <div className="container mx-auto px-4 pt-24 pb-8 max-w-5xl">
         {/* Title Section */}
         <h1 className="text-3xl font-bold text-gray-900 mb-2">{property.title}</h1>
@@ -80,107 +96,246 @@ const PropertyDetails = () => {
         </div>
 
         {/* Image Gallery */}
-        <div className="bg-white rounded-xl p-4 mb-6">
-          <div className="relative h-[400px] mb-4">
-            <img 
-              src={property.images[currentImageIndex]}
-              alt="Main Property View"
-              className="w-full h-full object-cover rounded-lg"
-            />
-            
-            {/* Navigation Arrows */}
-            <button 
-              onClick={prevImage}
-              className="absolute left-4 top-1/2 -translate-y-1/2 w-10 h-10 bg-white/80 rounded-full flex items-center justify-center hover:bg-white transition-colors"
-            >
-              <ChevronLeft className="h-6 w-6 text-gray-800" />
-            </button>
-            <button 
-              onClick={nextImage}
-              className="absolute right-4 top-1/2 -translate-y-1/2 w-10 h-10 bg-white/80 rounded-full flex items-center justify-center hover:bg-white transition-colors"
-            >
-              <ChevronRight className="h-6 w-6 text-gray-800" />
-            </button>
-
-            {/* Navigation Dots */}
-            <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex items-center gap-2">
-              {property.images.map((_, index) => (
-                <button
-                  key={index}
-                  onClick={() => setCurrentImageIndex(index)}
-                  className={`w-2 h-2 rounded-full transition-all ${
-                    currentImageIndex === index 
-                      ? 'bg-white w-4' 
-                      : 'bg-white/60 hover:bg-white/80'
-                  }`}
-                />
-              ))}
-            </div>
-          </div>
-
-          {/* Thumbnail Strip */}
-          <div className="flex gap-4 overflow-x-auto pb-2">
-            {property.images.map((image, index) => (
+        {property.images && property.images.length > 0 && (
+          <div className="bg-white rounded-xl p-4 mb-6">
+            <div className="relative h-[400px] mb-4">
               <img 
-                key={index}
-                src={image}
-                alt={`Property View ${index + 1}`}
-                className={`w-24 h-24 object-cover rounded-lg cursor-pointer transition-all ${
-                  currentImageIndex === index 
-                    ? 'ring-2 ring-violet-600 opacity-100' 
-                    : 'opacity-60 hover:opacity-100'
-                }`}
-                onClick={() => setCurrentImageIndex(index)}
+                src={property.images[currentImageIndex]}
+                alt={`${property.title} - View ${currentImageIndex + 1}`}
+                className="w-full h-full object-cover rounded-lg"
               />
-            ))}
+              
+              {property.images.length > 1 && (
+                <>
+                  {/* Navigation Arrows */}
+                  <button 
+                    onClick={prevImage}
+                    className="absolute left-4 top-1/2 -translate-y-1/2 w-10 h-10 bg-white/80 rounded-full flex items-center justify-center hover:bg-white transition-colors"
+                  >
+                    <ChevronLeft className="h-6 w-6 text-gray-800" />
+                  </button>
+                  <button 
+                    onClick={nextImage}
+                    className="absolute right-4 top-1/2 -translate-y-1/2 w-10 h-10 bg-white/80 rounded-full flex items-center justify-center hover:bg-white transition-colors"
+                  >
+                    <ChevronRight className="h-6 w-6 text-gray-800" />
+                  </button>
+
+                  {/* Navigation Dots */}
+                  <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex items-center gap-2">
+                    {property.images.map((_, index) => (
+                      <button
+                        key={index}
+                        onClick={() => setCurrentImageIndex(index)}
+                        className={`w-2 h-2 rounded-full transition-all ${
+                          currentImageIndex === index 
+                            ? 'bg-white w-4' 
+                            : 'bg-white/60 hover:bg-white/80'
+                        }`}
+                      />
+                    ))}
+                  </div>
+                </>
+              )}
+            </div>
+
+            {/* Thumbnail Strip */}
+            {property.images.length > 1 && (
+              <div className="flex gap-4 overflow-x-auto pb-2">
+                {property.images.map((image, index) => (
+                  <img 
+                    key={index}
+                    src={image}
+                    alt={`${property.title} - View ${index + 1}`}
+                    className={`w-24 h-24 object-cover rounded-lg cursor-pointer transition-all ${
+                      currentImageIndex === index 
+                        ? 'ring-2 ring-violet-600 opacity-100' 
+                        : 'opacity-60 hover:opacity-100'
+                    }`}
+                    onClick={() => setCurrentImageIndex(index)}
+                  />
+                ))}
+              </div>
+            )}
           </div>
-        </div>
+        )}
 
         {/* Details Section */}
         <div className="bg-white rounded-xl p-6 mb-6">
           <h2 className="text-xl font-semibold mb-4">Details</h2>
           <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-            {Object.entries(property.details).map(([key, value]) => (
-              <div key={key} className="border-b pb-2">
-                <p className="text-gray-500 text-sm">{key}</p>
-                <p className="font-medium">{value}</p>
+            {property.propertyType && (
+              <div className="border-b pb-2">
+                <p className="text-gray-500 text-sm">Property Type</p>
+                <p className="font-medium capitalize">{property.propertyType}</p>
               </div>
-            ))}
+            )}
+            {property.constructionStatus && (
+              <div className="border-b pb-2">
+                <p className="text-gray-500 text-sm">Construction Status</p>
+                <p className="font-medium capitalize">{property.constructionStatus}</p>
+              </div>
+            )}
+            {property.furnishing && (
+              <div className="border-b pb-2">
+                <p className="text-gray-500 text-sm">Furnishing</p>
+                <p className="font-medium capitalize">{property.furnishing}</p>
+              </div>
+            )}
+            {property.facing && (
+              <div className="border-b pb-2">
+                <p className="text-gray-500 text-sm">Facing</p>
+                <p className="font-medium capitalize">{property.facing}</p>
+              </div>
+            )}
+            {property.floor && (
+              <div className="border-b pb-2">
+                <p className="text-gray-500 text-sm">Floor</p>
+                <p className="font-medium">{property.floor}</p>
+              </div>
+            )}
+            {property.totalFloors && (
+              <div className="border-b pb-2">
+                <p className="text-gray-500 text-sm">Total Floors</p>
+                <p className="font-medium">{property.totalFloors}</p>
+              </div>
+            )}
+            {property.area && (
+              <div className="border-b pb-2">
+                <p className="text-gray-500 text-sm">Area</p>
+                <p className="font-medium">{property.area} m²</p>
+              </div>
+            )}
+            {property.ageOfProperty && (
+              <div className="border-b pb-2">
+                <p className="text-gray-500 text-sm">Age of Property</p>
+                <p className="font-medium">{property.ageOfProperty}</p>
+              </div>
+            )}
+            {property.availableFrom && (
+              <div className="border-b pb-2">
+                <p className="text-gray-500 text-sm">Available From</p>
+                <p className="font-medium">{new Date(property.availableFrom).toLocaleDateString()}</p>
+              </div>
+            )}
           </div>
         </div>
+
+        {/* Features Section */}
+        {property.features && Object.keys(property.features).length > 0 && (
+          <div className="bg-white rounded-xl p-6 mb-6">
+            <h2 className="text-xl font-semibold mb-4">Features</h2>
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+              {Object.entries(property.features)
+                .filter(([_, value]) => value)
+                .map(([key]) => (
+                  <div key={key} className="flex items-center gap-2">
+                    <div className="w-2 h-2 bg-violet-600 rounded-full"></div>
+                    <span className="capitalize">{key.replace('-', ' ')}</span>
+                  </div>
+                ))
+              }
+            </div>
+          </div>
+        )}
 
         {/* Amenities Section */}
-        <div className="bg-white rounded-xl p-6 mb-6">
-          <h2 className="text-xl font-semibold mb-4">Amenities</h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {property.amenities.map((amenity, index) => (
-              <div key={index} className="flex items-start gap-4">
-                <div className="p-2 bg-violet-100 rounded-lg">
-                  <amenity.icon className="h-6 w-6 text-violet-600" />
-                </div>
+        {(property.amenities?.length > 0 || property.nearbyPlaces?.length > 0) && (
+          <div className="bg-white rounded-xl p-6 mb-6">
+            <h2 className="text-xl font-semibold mb-4">Amenities & Nearby Places</h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {property.amenities?.length > 0 && (
                 <div>
-                  <h3 className="font-medium">{amenity.name}</h3>
-                  <p className="text-sm text-gray-500">{amenity.distance}</p>
-                  {amenity.places.map((place, i) => (
-                    <p key={i} className="text-sm text-gray-600">{place}</p>
-                  ))}
+                  <h3 className="font-medium mb-2">Additional Amenities</h3>
+                  <div className="space-y-2">
+                    {property.amenities.map((amenity, index) => (
+                      <div key={index} className="flex items-center gap-2">
+                        <div className="w-2 h-2 bg-violet-600 rounded-full"></div>
+                        <span>{amenity}</span>
+                      </div>
+                    ))}
+                  </div>
                 </div>
-              </div>
-            ))}
+              )}
+              {property.nearbyPlaces?.length > 0 && (
+                <div>
+                  <h3 className="font-medium mb-2">Nearby Places</h3>
+                  <div className="space-y-2">
+                    {property.nearbyPlaces.map((place, index) => (
+                      <div key={index} className="flex items-center gap-2">
+                        <div className="w-2 h-2 bg-violet-600 rounded-full"></div>
+                        <span>{place}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
           </div>
-        </div>
+        )}
 
-        {/* Address Section */}
+        {/* Contact Information */}
+        {property.contactInfo && (
+          <div className="bg-white rounded-xl p-6 mb-6">
+            <h2 className="text-xl font-semibold mb-4">Contact Information</h2>
+            <div className="space-y-4">
+              {property.contactInfo.name && (
+                <div className="flex items-center gap-3">
+                  <div className="p-2 bg-violet-100 rounded-lg">
+                    <MapPin className="h-5 w-5 text-violet-600" />
+                  </div>
+                  <div>
+                    <p className="font-medium">{property.contactInfo.name}</p>
+                    <p className="text-sm text-gray-500">Contact Person</p>
+                  </div>
+                </div>
+              )}
+              {property.contactInfo.phone && (
+                <div className="flex items-center gap-3">
+                  <div className="p-2 bg-violet-100 rounded-lg">
+                    <Phone className="h-5 w-5 text-violet-600" />
+                  </div>
+                  <div>
+                    <p className="font-medium">{property.contactInfo.phone}</p>
+                    <p className="text-sm text-gray-500">Phone Number</p>
+                  </div>
+                </div>
+              )}
+              {property.contactInfo.email && (
+                <div className="flex items-center gap-3">
+                  <div className="p-2 bg-violet-100 rounded-lg">
+                    <Mail className="h-5 w-5 text-violet-600" />
+                  </div>
+                  <div>
+                    <p className="font-medium">{property.contactInfo.email}</p>
+                    <p className="text-sm text-gray-500">Email Address</p>
+                  </div>
+                </div>
+              )}
+              {property.contactInfo.preferredContactMethod && (
+                <p className="text-sm text-gray-500 mt-2">
+                  Preferred contact method: {' '}
+                  <span className="font-medium capitalize">
+                    {property.contactInfo.preferredContactMethod}
+                  </span>
+                </p>
+              )}
+            </div>
+          </div>
+        )}
+
+        {/* Location Section */}
         <div className="bg-white rounded-xl p-6">
-          <h2 className="text-xl font-semibold mb-4">Address</h2>
-          <p className="text-gray-600 mb-2">{property.address.full}</p>
-          <p className="text-gray-600 mb-2">Area: {property.address.area}</p>
-          <p className="text-violet-600 font-medium mb-4">{property.address.zone}</p>
+          <h2 className="text-xl font-semibold mb-4">Location</h2>
+          <p className="text-gray-600 mb-2">{property.location}</p>
+          <p className="text-violet-600 font-medium mb-4">
+            Zone: {property.region.charAt(0).toUpperCase() + property.region.slice(1)} Bangalore
+          </p>
           
           {/* Map */}
           <div className="w-full h-[400px] bg-gray-100 rounded-lg overflow-hidden">
             <iframe 
-              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3887.2600678458396!2d77.64042937473893!3d13.020613987318565!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3bae17b1c6ff3edf%3A0x1e98e3e73d40c337!2sHRBR%20Layout%2C%20Kalyan%20Nagar%2C%20Bengaluru%2C%20Karnataka!5e0!3m2!1sen!2sin!4v1709799171599!5m2!1sen!2sin"
+              src={`https://www.google.com/maps/embed/v1/place?key=YOUR_GOOGLE_MAPS_API_KEY&q=${encodeURIComponent(property.location + ', Bangalore, Karnataka')}`}
               width="100%"
               height="100%"
               style={{ border: 0 }}

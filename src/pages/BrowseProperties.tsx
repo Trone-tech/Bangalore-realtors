@@ -1,103 +1,32 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import { Home, Instagram, Twitter, Linkedin, Search, SlidersHorizontal } from 'lucide-react';
-
-const properties = [
-  {
-    price: "2,095",
-    location: "Bommasandra, Bangalore",
-    beds: "3",
-    baths: "2",
-    area: "5x7",
-    popular: true,
-    region: "south",
-    priceNum: 2095
-  },
-  {
-    price: "2,700",
-    location: "RamMurthy Nagar, Bangalore",
-    beds: "4",
-    baths: "2",
-    area: "6x7.5",
-    popular: true,
-    region: "east",
-    priceNum: 2700
-  },
-  {
-    price: "4,550",
-    location: "Kaggadaspur, Bangalore",
-    beds: "4",
-    baths: "3",
-    area: "8x7",
-    popular: true,
-    region: "east",
-    priceNum: 4550
-  },
-  {
-    price: "2,400",
-    location: "NRI Layout, Bangalore",
-    beds: "4",
-    baths: "2",
-    area: "6x7",
-    region: "north",
-    priceNum: 2400
-  },
-  {
-    price: "1,200",
-    location: "HBR layout, Bangalore",
-    beds: "2",
-    baths: "1",
-    area: "5x5",
-    region: "north",
-    priceNum: 1200
-  },
-  {
-    price: "1,600",
-    location: "Whitefield, Bangalore",
-    beds: "3",
-    baths: "1",
-    area: "5x7",
-    region: "east",
-    priceNum: 1600
-  },
-  {
-    price: "3,095",
-    location: "Rajajinagar, Bangalore",
-    beds: "3",
-    baths: "2",
-    area: "5x7",
-    popular: true,
-    region: "west",
-    priceNum: 3095
-  },
-  {
-    price: "2,800",
-    location: "Malleshwaram, Bangalore",
-    beds: "4",
-    baths: "2",
-    area: "6x7.5",
-    popular: true,
-    region: "west",
-    priceNum: 2800
-  },
-  {
-    price: "3,550",
-    location: "JP Nagar, Bangalore",
-    beds: "4",
-    baths: "3",
-    area: "8x7",
-    popular: true,
-    region: "south",
-    priceNum: 3550
-  }
-];
+import { propertyService, Property } from '../services/propertyService';
 
 const BrowseProperties = () => {
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedRegion, setSelectedRegion] = useState('all');
   const [sortBy, setSortBy] = useState('newest');
+  const [properties, setProperties] = useState<Property[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+
+  useEffect(() => {
+    const loadProperties = async () => {
+      try {
+        const propertiesList = await propertyService.getAllProperties();
+        setProperties(propertiesList);
+      } catch (error) {
+        setError('Failed to load properties');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadProperties();
+  }, []);
 
   // Filter and sort properties
   const filteredProperties = useMemo(() => {
@@ -106,7 +35,8 @@ const BrowseProperties = () => {
     // Filter by search term
     if (searchTerm) {
       result = result.filter(property =>
-        property.location.toLowerCase().includes(searchTerm.toLowerCase())
+        property.location.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        property.title.toLowerCase().includes(searchTerm.toLowerCase())
       );
     }
 
@@ -130,10 +60,10 @@ const BrowseProperties = () => {
     }
 
     return result;
-  }, [searchTerm, selectedRegion, sortBy]);
+  }, [searchTerm, selectedRegion, sortBy, properties]);
 
-  const handlePropertyClick = (index: number) => {
-    navigate(`/property/${index}`);
+  const handlePropertyClick = (id: string) => {
+    navigate(`/property/${id}`);
   };
 
   return (
@@ -152,7 +82,7 @@ const BrowseProperties = () => {
               <Search className="absolute left-4 top-3.5 h-5 w-5 text-gray-400" />
               <input
                 type="text"
-                placeholder="Search by location..."
+                placeholder="Search by location or title..."
                 className="w-full pl-12 pr-4 py-3 rounded-lg text-gray-800 focus:outline-none focus:ring-2 focus:ring-violet-300"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
@@ -246,69 +176,70 @@ const BrowseProperties = () => {
           </select>
         </div>
 
-        {/* Property Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
-          {filteredProperties.map((property, index) => (
-            <div 
-              key={index} 
-              className="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-lg transition-shadow duration-300 cursor-pointer"
-              onClick={() => handlePropertyClick(index)}
-            >
-              <div className="relative">
-                {property.popular && (
-                  <div className="absolute left-4 top-4 bg-violet-600 text-white px-4 py-1.5 rounded-lg flex items-center gap-2 font-medium">
-                    <img src="/assets/Vector.png" alt="Star" className="w-4 h-4" />
-                    <span>POPULAR</span>
-                  </div>
-                )}
-                <div className="absolute right-4 top-4 bg-white/90 backdrop-blur-sm text-violet-600 px-4 py-1.5 rounded-lg font-medium">
-                  {property.region.charAt(0).toUpperCase() + property.region.slice(1)}
-                </div>
-                <img 
-                  src="/assets/tentimage.png" 
-                  alt={`Property ${index + 1}`} 
-                  className="w-full h-64 object-cover hover:scale-105 transition-transform duration-300" 
-                />
-              </div>
-              <div className="p-6">
-                <div className="flex flex-col gap-2">
-                  <div className="flex items-baseline">
-                    <span className="text-violet-600 text-2xl font-semibold">₹</span>
-                    <span className="text-2xl font-semibold">{property.price}</span>
-                    <span className="text-gray-500 text-sm ml-1">/month</span>
-                  </div>
-                  <h3 className="text-xl font-semibold text-gray-900">Modern Apartment</h3>
-                  <p className="text-gray-500">{property.location}</p>
-                </div>
-                <div className="flex items-center gap-6 mt-6 border-t pt-6">
-                  <div className="flex items-center gap-2">
-                    <img src="/assets/Bed.png" alt="Beds" className="w-5 h-5" />
-                    <span className="text-gray-600">{property.beds} Beds</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <img src="/assets/Bath.png" alt="Bathrooms" className="w-5 h-5" />
-                    <span className="text-gray-600">{property.baths} Bathrooms</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <img src="/assets/Square Meters.png" alt="Area" className="w-5 h-5" />
-                    <span className="text-gray-600">{property.area} m²</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
-
-        {/* Pagination */}
-        <div className="flex justify-center mt-8">
-          <div className="flex items-center gap-2">
-            <button className="px-4 py-2 rounded-lg border border-gray-200 hover:bg-violet-50 text-gray-600">Previous</button>
-            <button className="px-4 py-2 rounded-lg bg-violet-600 text-white">1</button>
-            <button className="px-4 py-2 rounded-lg border border-gray-200 hover:bg-violet-50 text-gray-600">2</button>
-            <button className="px-4 py-2 rounded-lg border border-gray-200 hover:bg-violet-50 text-gray-600">3</button>
-            <button className="px-4 py-2 rounded-lg border border-gray-200 hover:bg-violet-50 text-gray-600">Next</button>
+        {/* Error Message */}
+        {error && (
+          <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-8">
+            {error}
           </div>
-        </div>
+        )}
+
+        {/* Loading State */}
+        {loading ? (
+          <div className="text-center py-12">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-violet-600 mx-auto"></div>
+            <p className="mt-4 text-gray-600">Loading properties...</p>
+          </div>
+        ) : (
+          /* Property Grid */
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
+            {filteredProperties.map((property) => (
+              <div
+                key={property.id}
+                onClick={() => property.id && handlePropertyClick(property.id)}
+                className="bg-white rounded-2xl overflow-hidden hover:shadow-lg transition-shadow cursor-pointer"
+              >
+                <div className="relative">
+                  {property.popular && (
+                    <div className="absolute left-4 top-4 bg-violet-600 text-white px-4 py-1.5 rounded-lg flex items-center gap-2 font-medium">
+                      <img src="/assets/Vector.png" alt="Star" className="w-4 h-4" />
+                      <span>POPULAR</span>
+                    </div>
+                  )}
+                  <img 
+                    src={property.images?.[0] || "/assets/tentimage.png"} 
+                    alt={property.title} 
+                    className="w-full h-52 object-cover"
+                  />
+                </div>
+                <div className="p-6">
+                  <div className="flex flex-col gap-1">
+                    <div className="flex items-baseline">
+                      <span className="text-violet-600 text-2xl font-semibold">₹</span>
+                      <span className="text-2xl font-semibold">{property.price}</span>
+                      <span className="text-gray-500 text-sm ml-1">/month</span>
+                    </div>
+                    <h3 className="text-xl font-semibold text-gray-900">{property.title}</h3>
+                    <p className="text-gray-500 text-sm">{property.location}</p>
+                  </div>
+                  <div className="flex items-center gap-6 mt-6">
+                    <div className="flex items-center gap-2">
+                      <img src="/assets/Bed.png" alt="Beds" className="w-5 h-5" />
+                      <span className="text-gray-600">{property.beds} Beds</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <img src="/assets/Bath.png" alt="Bathrooms" className="w-5 h-5" />
+                      <span className="text-gray-600">{property.baths} Bathrooms</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <img src="/assets/Square Meters.png" alt="Area" className="w-5 h-5" />
+                      <span className="text-gray-600">{property.area} m²</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );

@@ -1,9 +1,58 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Building2, Shield, Percent, Settings, Instagram, Twitter, Linkedin, Home } from 'lucide-react';
 import HeroSection from '../components/HeroSection';
+import { getDatabase, ref, get, query, limitToFirst } from 'firebase/database';
+import { app } from '../firebase';
+
+interface Property {
+  id?: string;
+  price: string;
+  location: string;
+  beds: string;
+  baths: string;
+  area: string;
+  popular: boolean;
+  region: string;
+  priceNum: number;
+  title: string;
+  description: string;
+  amenities: string[];
+}
 
 function HomePage() {
+  const [featuredProperties, setFeaturedProperties] = useState<Property[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+
+  useEffect(() => {
+    const loadFeaturedProperties = async () => {
+      try {
+        const db = getDatabase(app);
+        const propertiesRef = ref(db, 'properties');
+        const snapshot = await get(propertiesRef);
+        
+        if (snapshot.exists()) {
+          const propertiesData = snapshot.val();
+          const propertiesList = Object.entries(propertiesData)
+            .map(([id, data]) => ({
+              id,
+              ...(data as Omit<Property, 'id'>)
+            }))
+            .filter(property => property.popular)
+            .slice(0, 3);
+          setFeaturedProperties(propertiesList);
+        }
+      } catch (error) {
+        setError('Failed to load properties');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadFeaturedProperties();
+  }, []);
+
   return (
     <>
       <HeroSection />
@@ -73,71 +122,56 @@ function HomePage() {
             </Link>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
-            {[
-              {
-                price: "2,095",
-                location: "Bommasandra, Bangalore -xxx",
-                beds: "3",
-                baths: "2",
-                area: "5x7",
-                popular: true
-              },
-              {
-                price: "2,700",
-                location: "RamMurthy Nagar, Bangalore -xxx",
-                beds: "4",
-                baths: "2",
-                area: "6x7.5",
-                popular: true
-              },
-              {
-                price: "4,550",
-                location: "Kaggadaspur, Bangalore -xxx",
-                beds: "4",
-                baths: "3",
-                area: "8x7",
-                popular: true
-              }
-            ].map((property, index) => (
-              <div key={index} className="bg-white rounded-2xl overflow-hidden hover:shadow-lg transition-shadow">
-                <div className="relative">
-                  {property.popular && (
-                    <div className="absolute left-4 top-4 bg-violet-600 text-white px-4 py-1.5 rounded-lg flex items-center gap-2 font-medium">
-                      <img src="/assets/Vector.png" alt="Star" className="w-4 h-4" />
-                      <span>POPULAR</span>
-                    </div>
-                  )}
-                  <img src="/assets/tentimage.png" alt={`Property ${index + 1}`} className="w-full h-52 object-cover" />
-                </div>
-                <div className="p-6">
-                  <div className="flex flex-col gap-1">
-                    <div className="flex items-baseline">
-                      <span className="text-violet-600 text-2xl font-semibold">₹</span>
-                      <span className="text-2xl font-semibold">{property.price}</span>
-                      <span className="text-gray-500 text-sm ml-1">/month</span>
-                    </div>
-                    <h3 className="text-xl font-semibold text-gray-900">Lorem Ipsum</h3>
-                    <p className="text-gray-500 text-sm">{property.location}</p>
+          {error && (
+            <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-8">
+              {error}
+            </div>
+          )}
+
+          {loading ? (
+            <div className="text-center py-12">Loading featured properties...</div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
+              {featuredProperties.map((property) => (
+                <div key={property.id} className="bg-white rounded-2xl overflow-hidden hover:shadow-lg transition-shadow">
+                  <div className="relative">
+                    {property.popular && (
+                      <div className="absolute left-4 top-4 bg-violet-600 text-white px-4 py-1.5 rounded-lg flex items-center gap-2 font-medium">
+                        <img src="/assets/Vector.png" alt="Star" className="w-4 h-4" />
+                        <span>POPULAR</span>
+                      </div>
+                    )}
+                    <img src="/assets/tentimage.png" alt={property.title || 'Property'} className="w-full h-52 object-cover" />
                   </div>
-                  <div className="flex items-center gap-6 mt-6">
-                    <div className="flex items-center gap-2">
-                      <img src="/assets/Bed.png" alt="Beds" className="w-5 h-5" />
-                      <span className="text-gray-600">{property.beds} Beds</span>
+                  <div className="p-6">
+                    <div className="flex flex-col gap-1">
+                      <div className="flex items-baseline">
+                        <span className="text-violet-600 text-2xl font-semibold">₹</span>
+                        <span className="text-2xl font-semibold">{property.price}</span>
+                        <span className="text-gray-500 text-sm ml-1">/month</span>
+                      </div>
+                      <h3 className="text-xl font-semibold text-gray-900">{property.title || 'Modern Apartment'}</h3>
+                      <p className="text-gray-500 text-sm">{property.location}</p>
                     </div>
-                    <div className="flex items-center gap-2">
-                      <img src="/assets/Bath.png" alt="Bathrooms" className="w-5 h-5" />
-                      <span className="text-gray-600">{property.baths} Bathrooms</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <img src="/assets/Square Meters.png" alt="Area" className="w-5 h-5" />
-                      <span className="text-gray-600">{property.area} m²</span>
+                    <div className="flex items-center gap-6 mt-6">
+                      <div className="flex items-center gap-2">
+                        <img src="/assets/Bed.png" alt="Beds" className="w-5 h-5" />
+                        <span className="text-gray-600">{property.beds} Beds</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <img src="/assets/Bath.png" alt="Bathrooms" className="w-5 h-5" />
+                        <span className="text-gray-600">{property.baths} Bathrooms</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <img src="/assets/Square Meters.png" alt="Area" className="w-5 h-5" />
+                        <span className="text-gray-600">{property.area} m²</span>
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          )}
         </div>
       </section>
 

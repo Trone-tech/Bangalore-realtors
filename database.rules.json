@@ -1,0 +1,8 @@
+{
+  "rules": {
+    "properties": {
+      ".read": true,
+      ".write": "auth != null"
+    }
+  }
+} 

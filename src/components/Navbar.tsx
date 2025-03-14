@@ -22,6 +22,7 @@ const Navbar: React.FC = () => {
             <Link to="/browse" className="text-sm text-gray-600 hover:text-gray-900 transition-colors">Buy</Link>
             <Link to="/browse" className="text-sm text-gray-600 hover:text-gray-900 transition-colors">Sell</Link>
             <Link to="/about" className="text-sm text-gray-600 hover:text-gray-900 transition-colors">About Us</Link>
+            <Link to="/admin" className="text-sm text-gray-600 hover:text-gray-900 transition-colors">Admin</Link>
           </div>
 
           {/* Mobile Menu Button */}
@@ -67,6 +68,13 @@ const Navbar: React.FC = () => {
               onClick={() => setIsMenuOpen(false)}
             >
               About Us
+            </Link>
+            <Link 
+              to="/admin" 
+              className="block py-2 text-sm text-gray-600 hover:text-gray-900 hover:bg-gray-50 px-4 rounded transition-colors"
+              onClick={() => setIsMenuOpen(false)}
+            >
+              Admin
             </Link>
           </div>
         </div>
