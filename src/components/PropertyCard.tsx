@@ -1,50 +1,86 @@
 import React from 'react';
-import { Heart, Bed, Bath, Square } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { MapPin, Home, Bed, Bath, Square } from 'lucide-react';
 
-const PropertyCard = () => {
+interface PropertyCardProps {
+  id: string;
+  title: string;
+  location: string;
+  area: string;
+  price: string;
+  bedrooms: number;
+  bathrooms: number;
+  squareFeet: number;
+  imageUrl: string;
+  zone: 'north' | 'south' | 'east' | 'west' | 'central';
+  type: 'rent' | 'sale';
+}
+
+const PropertyCard: React.FC<PropertyCardProps> = ({
+  id,
+  title,
+  location,
+  area,
+  price,
+  bedrooms,
+  bathrooms,
+  squareFeet,
+  imageUrl,
+  zone,
+  type
+}) => {
   return (
-    <div className="bg-white rounded-xl shadow-lg overflow-hidden">
-      <div className="relative">
-        <img 
-          src="https://images.unsplash.com/photo-1564013799919-ab600027ffc6?ixlib=rb-1.2.1&auto=format&fit=crop&w=1000&q=80"
-          alt="Property"
-          className="w-full h-48 object-cover"
+    <Link to={`/property/${id}`} className="property-card group">
+      <div className="relative overflow-hidden">
+        {/* Property Image */}
+        <img
+          src={imageUrl}
+          alt={title}
+          className="w-full h-64 object-cover"
         />
-        <div className="absolute top-3 left-3 bg-violet-600 text-white px-3 py-1 rounded-full text-sm">
-          POPULAR
+        
+        {/* Price Tag */}
+        <div className="absolute top-4 right-4 glass px-4 py-2 rounded-full">
+          <span className="font-semibold text-[--text-primary]">
+            ₹{price}{type === 'rent' ? '/month' : ''}
+          </span>
         </div>
-        <button className="absolute top-3 right-3 p-1.5 hover:bg-violet-100 rounded-full transition-colors">
-          <Heart className="h-5 w-5 text-violet-600" />
-        </button>
-      </div>
-      <div className="p-4">
-        <div className="flex justify-between items-start mb-2">
-          <div>
-            <div className="flex items-center gap-1">
-              <span className="text-violet-600 text-xl font-semibold">₹2,095</span>
-              <span className="text-gray-500">/month</span>
-            </div>
-            <h3 className="font-semibold text-gray-900 mt-1">Lorem Ipsum</h3>
-            <p className="text-gray-500 text-sm">Banaswadi, Bangalore-xxx</p>
-          </div>
-        </div>
-        <div className="flex items-center justify-between mt-4 text-gray-500 text-sm">
-          <div className="flex items-center gap-1">
-            <Bed className="h-4 w-4" />
-            <span>3 Beds</span>
-          </div>
-          <div className="flex items-center gap-1">
-            <Bath className="h-4 w-4" />
-            <span>2 Bathrooms</span>
-          </div>
-          <div className="flex items-center gap-1">
-            <Square className="h-4 w-4" />
-            <span>5x7 m²</span>
-          </div>
+
+        {/* Location Badge */}
+        <div className={`absolute top-4 left-4 location-badge location-${zone}`}>
+          {zone.charAt(0).toUpperCase() + zone.slice(1)} Bangalore
         </div>
       </div>
-    </div>
+
+      <div className="p-6">
+        {/* Title and Location */}
+        <div className="mb-4">
+          <h3 className="text-lg font-semibold text-[--text-primary] mb-2">{title}</h3>
+          <div className="flex items-center text-[--text-secondary]">
+            <MapPin className="w-4 h-4 mr-2" />
+            <span className="text-sm">{area}, {location}</span>
+          </div>
+        </div>
+
+        {/* Property Features */}
+        <div className="flex items-center justify-between text-[--text-secondary] border-t border-gray-100 pt-4">
+          <div className="flex items-center">
+            <Bed className="w-4 h-4 mr-1" />
+            <span className="text-sm">{bedrooms} Beds</span>
+          </div>
+          <div className="flex items-center">
+            <Bath className="w-4 h-4 mr-1" />
+            <span className="text-sm">{bathrooms} Baths</span>
+          </div>
+          <div className="flex items-center">
+            <Square className="w-4 h-4 mr-1" />
+            <span className="text-sm">{squareFeet} sq.ft</span>
+          </div>
+        </div>
+      </div>
+    </Link>
   );
 };
 
+export default PropertyCard;
 export default PropertyCard;

@@ -3,8 +3,120 @@
 @tailwind utilities;
 
 :root {
-  --primary: #7C3AED;
-  --primary-light: #DDD6FE;
+  /* Modern Color Palette */
+  --primary: #6366F1;
+  --primary-dark: #4F46E5;
+  --primary-light: #818CF8;
+  --secondary: #10B981;
+  --accent: #F59E0B;
+  --background: #F9FAFB;
+  --surface: #FFFFFF;
+  --text-primary: #1F2937;
+  --text-secondary: #4B5563;
+  --text-tertiary: #9CA3AF;
+  --error: #EF4444;
+  --success: #10B981;
+  --warning: #F59E0B;
+}
+
+/* Modern Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--background);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--primary-light);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--primary);
+}
+
+/* Modern Card Styles */
+.card {
+  @apply bg-white rounded-xl shadow-lg transition-all duration-300 hover:shadow-xl;
+}
+
+/* Glass Effect */
+.glass {
+  @apply bg-white/70 backdrop-blur-md;
+}
+
+/* Modern Button Styles */
+.btn {
+  @apply px-6 py-2 rounded-lg font-medium transition-all duration-300 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-offset-2;
+}
+
+.btn-primary {
+  @apply bg-[--primary] text-white hover:bg-[--primary-dark] focus:ring-[--primary];
+}
+
+.btn-secondary {
+  @apply bg-[--secondary] text-white hover:opacity-90 focus:ring-[--secondary];
+}
+
+.btn-accent {
+  @apply bg-[--accent] text-white hover:opacity-90 focus:ring-[--accent];
+}
+
+/* Modern Input Styles */
+.input {
+  @apply w-full px-4 py-2 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[--primary] focus:border-transparent transition-all duration-300;
+}
+
+/* Animation Classes */
+@layer components {
+  .fade-in {
+    @apply animate-fade-in;
+  }
+
+  .slide-up {
+    @apply animate-slide-up;
+  }
+}
+
+/* Hero Section Enhancement */
+.hero-gradient {
+  background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+}
+
+/* Property Card Enhancement */
+.property-card {
+  @apply card overflow-hidden;
+}
+
+.property-card img {
+  @apply transition-transform duration-300 hover:scale-105;
+}
+
+/* Location Badge */
+.location-badge {
+  @apply inline-flex items-center px-3 py-1 rounded-full text-sm font-medium;
+}
+
+.location-north {
+  @apply bg-blue-100 text-blue-800;
+}
+
+.location-south {
+  @apply bg-green-100 text-green-800;
+}
+
+.location-east {
+  @apply bg-purple-100 text-purple-800;
+}
+
+.location-west {
+  @apply bg-orange-100 text-orange-800;
+}
+
+.location-central {
+  @apply bg-red-100 text-red-800;
 }
 
 body {
