@@ -9,7 +9,345 @@ const AdminDashboard = () => {
   const [selectedZone, setSelectedZone] = useState('all');
   const [properties, setProperties] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [formData, setFormData] = useState({import React, { useState, useEffect } from 'react';
+import { Plus, Search, Filter, Edit, Trash2, MoreVertical, X, Train, Hospital } from 'lucide-react';
+import { getDatabase, ref, onValue, remove, set } from 'firebase/database';
+import { app } from '../firebase';
+
+const AdminDashboard = () => {
+  const [showAddProperty, setShowAddProperty] = useState(false);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [selectedZone, setSelectedZone] = useState('all');
+  const [properties, setProperties] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [formData, setFormData] = useState({
+    title: '',
+    price: '',
+    location: '',
+    zone: 'north',
+    beds: '',
+    baths: '',
+    area: '',
+    propertyType: 'rent',
+    description: '',
+    popular: false,
+    details: {
+      facing: '',
+      ownership: '',
+      furnished: 'unfurnished',
+      carParking: '',
+      propertyAge: '',
+    },
+    amenities: {
+      security: false,
+      lift: false,
+      powerBackup: false,
+      waterSupply: false,
+      garden: false,
+      clubhouse: false,
+      swimmingPool: false,
+      gym: false,
+    },
+    nearbyFacilities: {
+      metroStation: '',
+      metroDistance: '',
+      hospital: '',
+      hospitalDistance: '',
+      school: '',
+      schoolDistance: '',
+      market: '',
+      marketDistance: '',
+    },
+    address: {
+      fullAddress: '',
+      googleMapsLink: '',
+    }
+  });
+
+  const zones = [
+    { value: 'all', label: 'All Zones' },
+    { value: 'north', label: 'North Bangalore' },
+    { value: 'south', label: 'South Bangalore' },
+    { value: 'east', label: 'East Bangalore' },
+    { value: 'west', label: 'West Bangalore' },
+    { value: 'central', label: 'Central Bangalore' },
+  ];
+
+  useEffect(() => {
+    const db = getDatabase(app);
+    const propertiesRef = ref(db, 'properties');
+
+    const unsubscribe = onValue(propertiesRef, (snapshot) => {
+      if (snapshot.exists()) {
+        const propertiesData = snapshot.val();
+        const propertiesList = Object.entries(propertiesData).map(([id, data]) => ({
+          id,
+          ...data,
+        }));
+        setProperties(propertiesList);
+      } else {
+        setProperties([]);
+      }
+      setLoading(false);
+    });
+
+    return () => unsubscribe();
+  }, []);
+
+  const handleInputChange = (e) => {
+    const { name, value, type, checked } = e.target;
+    // If you want to handle nested objects, you'll need a custom approach, 
+    // but here's the simple version for flat fields:
+    setFormData((prev) => ({
+      ...prev,
+      [name]: type === 'checkbox' ? checked : value,
+    }));
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const db = getDatabase(app);
+      const newPropertyRef = ref(db, `properties/${Date.now()}`);
+      await set(newPropertyRef, {
+        ...formData,
+        priceNum: parseFloat(formData.price.replace(/[^0-9.]/g, '')),
+        createdAt: Date.now(),
+      });
+      setShowAddProperty(false);
+      // Reset form
+      setFormData({
+        title: '',
+        price: '',
+        location: '',
+        zone: 'north',
+        beds: '',
+        baths: '',
+        area: '',
+        propertyType: 'rent',
+        description: '',
+        popular: false,
+        details: {
+          facing: '',
+          ownership: '',
+          furnished: 'unfurnished',
+          carParking: '',
+          propertyAge: '',
+        },
+        amenities: {
+          security: false,
+          lift: false,
+          powerBackup: false,
+          waterSupply: false,
+          garden: false,
+          clubhouse: false,
+          swimmingPool: false,
+          gym: false,
+        },
+        nearbyFacilities: {
+          metroStation: '',
+          metroDistance: '',
+          hospital: '',
+          hospitalDistance: '',
+          school: '',
+          schoolDistance: '',
+          market: '',
+          marketDistance: '',
+        },
+        address: {
+          fullAddress: '',
+          googleMapsLink: '',
+        }
+      });
+    } catch (error) {
+      console.error('Error adding property:', error);
+    }
+  };
+
+  const handleDeleteProperty = async (id) => {
+    if (window.confirm('Are you sure you want to delete this property?')) {
+      try {
+        const db = getDatabase(app);
+        await remove(ref(db, `properties/${id}`));
+      } catch (error) {
+        console.error('Error deleting property:', error);
+      }
+    }
+  };
+
+  const filteredProperties = properties.filter(
+    (property) =>
+      (selectedZone === 'all' || property.zone === selectedZone) &&
+      (property.title?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        property.location?.toLowerCase().includes(searchTerm.toLowerCase()))
+  );
+
+  return (
+    <div className="relative z-20 min-h-screen bg-gray-50">
+      {/* Increase top padding to avoid the fixed header overlapping */}
+      <div className="pt-24 max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+        {/* Header Section */}
+        <div className="flex flex-col sm:flex-row justify-between items-center mb-8">
+          <div>
+            <h1 className="text-2xl font-bold text-gray-900">Property Management</h1>
+            <p className="mt-1 text-sm text-gray-500">
+              Manage your properties across different zones in Bangalore
+            </p>
+          </div>
+          <button
+            onClick={() => setShowAddProperty(!showAddProperty)}
+            className="mt-4 sm:mt-0 btn bg-violet-600 hover:bg-violet-700 text-white flex items-center gap-2 px-4 py-2 rounded-lg shadow-sm"
+          >
+            {showAddProperty ? <X className="w-5 h-5" /> : <Plus className="w-5 h-5" />}
+            {showAddProperty ? 'Cancel' : 'Add Property'}
+          </button>
+        </div>
+
+        {/* Filters Section */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
+          {/* Search Input */}
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+            <input
+              type="text"
+              placeholder="Search properties..."
+              className="w-full pl-10 pr-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-violet-500 focus:border-transparent"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
+          </div>
+
+          {/* Zone Filter */}
+          <div className="relative">
+            <Filter className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+            <select
+              className="w-full pl-10 pr-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-violet-500 focus:border-transparent appearance-none bg-white"
+              value={selectedZone}
+              onChange={(e) => setSelectedZone(e.target.value)}
+            >
+              {zones.map((zone) => (
+                <option key={zone.value} value={zone.value}>
+                  {zone.label}
+                </option>
+              ))}
+            </select>
+          </div>
+        </div>
+
+        {/* Add Property Form */}
+        {showAddProperty && (
+          <div className="bg-white rounded-xl shadow-lg p-6 mb-8">
+            {/* ... your form code here ... */}
+            <form onSubmit={handleSubmit} className="space-y-6">
+              {/* Basic Details, Property Details, Amenities, etc. */}
+              {/* (Your existing form fields) */}
+              <div className="flex justify-end">
+                <button
+                  type="submit"
+                  className="px-4 py-2 bg-violet-600 text-white rounded-lg hover:bg-violet-700"
+                >
+                  Add Property
+                </button>
+              </div>
+            </form>
+          </div>
+        )}
+
+        {/* Property List */}
+        <div className="bg-white rounded-xl shadow-lg overflow-hidden">
+          <div className="overflow-x-auto">
+            <table className="min-w-full divide-y divide-gray-200">
+              <thead className="bg-gray-50">
+                <tr>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Property
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Details
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Location & Amenities
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Price
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Status
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Actions
+                  </th>
+                </tr>
+              </thead>
+              <tbody className="bg-white divide-y divide-gray-200">
+                {loading ? (
+                  <tr>
+                    <td colSpan="6" className="px-6 py-4 text-center text-gray-500">
+                      Loading properties...
+                    </td>
+                  </tr>
+                ) : filteredProperties.length === 0 ? (
+                  <tr>
+                    <td colSpan="6" className="px-6 py-4 text-center text-gray-500">
+                      No properties found
+                    </td>
+                  </tr>
+                ) : (
+                  filteredProperties.map((property) => (
+                    <tr key={property.id} className="hover:bg-gray-50">
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        {/* ... property title & type ... */}
+                      </td>
+                      <td className="px-6 py-4">
+                        {/* ... property details ... */}
+                      </td>
+                      <td className="px-6 py-4">
+                        {/* ... location & amenities ... */}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        ₹{property.price}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <span
+                          className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
+                            property.popular
+                              ? 'bg-green-100 text-green-800'
+                              : 'bg-gray-100 text-gray-800'
+                          }`}
+                        >
+                          {property.popular ? 'Popular' : 'Regular'}
+                        </span>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                        <div className="flex items-center gap-3">
+                          <button
+                            onClick={() => handleDeleteProperty(property.id)}
+                            className="text-red-600 hover:text-red-900"
+                          >
+                            <Trash2 className="w-5 h-5" />
+                          </button>
+                          <button className="text-violet-600 hover:text-violet-900">
+                            <Edit className="w-5 h-5" />
+                          </button>
+                          <button className="text-gray-400 hover:text-gray-600">
+                            <MoreVertical className="w-5 h-5" />
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))
+                )}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default AdminDashboard;
+
     title: '',
     price: '',
     location: '',
