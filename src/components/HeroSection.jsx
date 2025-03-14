@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 
 const HeroSection = () => {
   return (
@@ -26,9 +27,11 @@ const HeroSection = () => {
               </div>
             </div>
 
-            <button className="bg-violet-600 text-white px-8 py-3 rounded-lg font-medium hover:bg-violet-700 transition-colors w-full sm:w-auto">
-              Browse Properties
-            </button>
+            <Link to="/browse">
+              <button className="bg-violet-600 text-white px-8 py-3 rounded-lg font-medium hover:bg-violet-700 transition-colors w-full sm:w-auto">
+                Browse Properties
+              </button>
+            </Link>
           </div>
 
           {/* Right Column - Map and Property */}

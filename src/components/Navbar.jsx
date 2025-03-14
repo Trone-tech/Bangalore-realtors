@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Menu, X } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -10,14 +11,16 @@ const Navbar = () => {
         <div className="flex items-center justify-between">
           {/* Logo */}
           <div>
-            <span className="text-sm font-medium text-[#1E1B39]">Bangalore Realtors</span>
+            <Link to="/" className="text-sm font-medium text-[#1E1B39]">
+              Bangalore Realtors
+            </Link>
           </div>
 
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center gap-8">
-            <a href="#" className="text-sm text-gray-600 hover:text-gray-900">Rent</a>
-            <a href="#" className="text-sm text-gray-600 hover:text-gray-900">Buy</a>
-            <a href="#" className="text-sm text-gray-600 hover:text-gray-900">Sell</a>
+            <Link to="/browse" className="text-sm text-gray-600 hover:text-gray-900">Rent</Link>
+            <Link to="/browse" className="text-sm text-gray-600 hover:text-gray-900">Buy</Link>
+            <Link to="/browse" className="text-sm text-gray-600 hover:text-gray-900">Sell</Link>
           </div>
 
           {/* Mobile Menu Button */}
@@ -36,9 +39,9 @@ const Navbar = () => {
       {isMenuOpen && (
         <div className="md:hidden absolute top-14 left-0 right-0 bg-white border-t border-gray-100">
           <div className="container mx-auto px-6 py-3">
-            <a href="#" className="block py-2 text-sm text-gray-600 hover:text-gray-900">Rent</a>
-            <a href="#" className="block py-2 text-sm text-gray-600 hover:text-gray-900">Buy</a>
-            <a href="#" className="block py-2 text-sm text-gray-600 hover:text-gray-900">Sell</a>
+            <Link to="/browse" className="block py-2 text-sm text-gray-600 hover:text-gray-900">Rent</Link>
+            <Link to="/browse" className="block py-2 text-sm text-gray-600 hover:text-gray-900">Buy</Link>
+            <Link to="/browse" className="block py-2 text-sm text-gray-600 hover:text-gray-900">Sell</Link>
           </div>
         </div>
       )}
