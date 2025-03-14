@@ -17,11 +17,12 @@ const Navbar: React.FC = () => {
           </div>
 
           {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center gap-8">
+          <div className="hidden md:flex items-center space-x-6">
             <Link to="/browse" className="text-sm text-gray-600 hover:text-gray-900 transition-colors">Rent</Link>
             <Link to="/browse" className="text-sm text-gray-600 hover:text-gray-900 transition-colors">Buy</Link>
             <Link to="/browse" className="text-sm text-gray-600 hover:text-gray-900 transition-colors">Sell</Link>
             <Link to="/about" className="text-sm text-gray-600 hover:text-gray-900 transition-colors">About Us</Link>
+            <div className="w-px h-4 bg-gray-300"></div>
             <Link to="/admin" className="text-sm text-gray-600 hover:text-gray-900 transition-colors">Admin</Link>
           </div>
 
@@ -40,7 +41,7 @@ const Navbar: React.FC = () => {
       {/* Mobile menu */}
       {isMenuOpen && (
         <div className="md:hidden absolute top-14 left-0 right-0 bg-white border-t border-gray-100 shadow-lg">
-          <div className="container mx-auto px-6 py-3">
+          <div className="container mx-auto px-6 py-3 space-y-1">
             <Link 
               to="/browse" 
               className="block py-2 text-sm text-gray-600 hover:text-gray-900 hover:bg-gray-50 px-4 rounded transition-colors"
@@ -69,6 +70,7 @@ const Navbar: React.FC = () => {
             >
               About Us
             </Link>
+            <div className="h-px bg-gray-200 mx-4"></div>
             <Link 
               to="/admin" 
               className="block py-2 text-sm text-gray-600 hover:text-gray-900 hover:bg-gray-50 px-4 rounded transition-colors"

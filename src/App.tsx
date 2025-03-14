@@ -6,6 +6,7 @@ import BrowseProperties from './pages/BrowseProperties';
 import PropertyDetails from './pages/PropertyDetails';
 import AdminLogin from './pages/AdminLogin';
 import AdminDashboard from './pages/AdminDashboard';
+import AboutUs from './pages/AboutUs';
 import Footer from './components/Footer';
 import { AuthProvider } from './contexts/AuthContext';
 import ProtectedRoute from './components/ProtectedRoute';
@@ -22,6 +23,7 @@ function App() {
                 <Route path="/" element={<HomePage />} />
                 <Route path="/browse" element={<BrowseProperties />} />
                 <Route path="/property/:id" element={<PropertyDetails />} />
+                <Route path="/about" element={<AboutUs />} />
                 <Route path="/admin" element={<AdminLogin />} />
                 <Route 
                   path="/admin/dashboard" 
