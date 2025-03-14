@@ -1,6 +1,5 @@
-import React, { useState } from 'react';
-import { Menu, X } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import React from 'react';
+import { Link, useLocation } from 'react-router-dom';
 
 /**
  * Navbar Component
@@ -12,79 +11,42 @@ import { Link } from 'react-router-dom';
  * - Fixed positioning with shadow for better UX
  */
 const Navbar = () => {
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
-
-  const handleMenuToggle = () => setIsMenuOpen(!isMenuOpen);
-  const handleMenuClose = () => setIsMenuOpen(false);
-
+  const location = useLocation();
+  
   return (
-    <nav className="bg-white fixed w-full top-0 z-50 shadow-sm">
-      <div className="container mx-auto px-6 py-4">
-        <div className="flex items-center justify-between">
-          {/* Logo */}
-          <div>
-            <Link to="/" className="text-lg font-semibold text-[#1E1B39]">
-              Bangalore Realtors
+    <nav className="bg-white shadow-lg">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex justify-between h-16">
+          <div className="flex">
+            <Link to="/" className="flex-shrink-0 flex items-center">
+              <span className="text-xl font-bold text-violet-600">Bangalore Realtors</span>
             </Link>
           </div>
-
-          {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center space-x-6">
-            <Link to="/browse" className="text-sm text-gray-600 hover:text-gray-900 transition-colors">Rent</Link>
-            <Link to="/browse" className="text-sm text-gray-600 hover:text-gray-900 transition-colors">Buy</Link>
-            <Link to="/browse" className="text-sm text-gray-600 hover:text-gray-900 transition-colors">Sell</Link>
-            <Link to="/About" className="text-sm text-gray-600 hover:text-gray-900 transition-colors">About US</Link>
-          </div>
-
-          {/* Mobile Menu Button */}
-          <div className="md:hidden">
-            <button 
-              onClick={handleMenuToggle}
-              className="text-gray-600 hover:text-gray-900"
-              aria-label={isMenuOpen ? 'Close menu' : 'Open menu'}
+          
+          <div className="flex space-x-8">
+            <Link
+              to="/admin"
+              className={`inline-flex items-center px-1 pt-1 text-sm font-medium ${
+                location.pathname === '/admin'
+                  ? 'text-violet-600 border-b-2 border-violet-600'
+                  : 'text-gray-500 hover:text-gray-700'
+              }`}
             >
-              {isMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
-            </button>
+              Admin
+            </Link>
+            <Link
+              to="/about"
+              className={`inline-flex items-center px-1 pt-1 text-sm font-medium ${
+                location.pathname === '/about'
+                  ? 'text-violet-600 border-b-2 border-violet-600'
+                  : 'text-gray-500 hover:text-gray-700'
+              }`}
+            >
+              About Us
+            </Link>
           </div>
         </div>
       </div>
-
-      {/* Mobile menu */}
-      {isMenuOpen && (
-        <div className="md:hidden absolute top-14 left-0 right-0 bg-white border-t border-gray-100 shadow-lg">
-          <div className="container mx-auto px-6 py-3 space-y-1">
-            <Link 
-              to="/browse"
-              className="block py-2 text-sm text-gray-600 hover:text-gray-900 hover:bg-gray-50 px-4 rounded transition-colors"
-              onClick={handleMenuClose}
-            >
-              Rent
-            </Link>
-            <Link 
-              to="/browse"
-              className="block py-2 text-sm text-gray-600 hover:text-gray-900 hover:bg-gray-50 px-4 rounded transition-colors"
-              onClick={handleMenuClose}
-            >
-              Buy
-            </Link>
-            <Link 
-              to="/browse"
-              className="block py-2 text-sm text-gray-600 hover:text-gray-900 hover:bg-gray-50 px-4 rounded transition-colors"
-              onClick={handleMenuClose}
-            >
-              Sell
-            </Link>
-            <div className="h-px bg-gray-200 mx-4"></div>
-            <Link 
-              to="/about"
-              className="block py-2 text-sm text-gray-600 hover:text-gray-900 hover:bg-gray-50 px-4 rounded transition-colors"
-              onClick={handleMenuClose}
-            >
-              About US
-            </Link>
-          </div>
-        </div>
-      )}
     </nav>
   );
 };
