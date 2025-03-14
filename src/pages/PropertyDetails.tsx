@@ -66,9 +66,7 @@ const PropertyDetails = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <Navbar />
-      
+    <div className="bg-gray-50">
       <div className="container mx-auto px-4 pt-24 pb-8 max-w-5xl">
         {/* Title Section */}
         <h1 className="text-3xl font-bold text-gray-900 mb-2">{property.title}</h1>

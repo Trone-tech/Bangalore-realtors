@@ -201,65 +201,6 @@ function HomePage() {
           </div>
         </div>
       </section>
-
-      {/* Footer */}
-      <footer className="bg-white border-t">
-        <div className="container mx-auto px-4 py-12">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-            <div>
-              <div className="flex items-center space-x-2 mb-4">
-                <Home className="h-6 w-6 text-violet-600" />
-                <span className="text-xl font-bold">Bangalore Realtors</span>
-              </div>
-            </div>
-            
-            <div>
-              <h3 className="font-semibold mb-4">SELL A HOME</h3>
-              <ul className="space-y-2">
-                <li><a href="#" className="text-gray-600 hover:text-gray-900">Request an offer</a></li>
-                <li><a href="#" className="text-gray-600 hover:text-gray-900">Pricing</a></li>
-                <li><a href="#" className="text-gray-600 hover:text-gray-900">Reviews</a></li>
-              </ul>
-            </div>
-
-            <div>
-              <h3 className="font-semibold mb-4">BUY, RENT AND SELL</h3>
-              <ul className="space-y-2">
-                <li><a href="#" className="text-gray-600 hover:text-gray-900">Buy and sell properties</a></li>
-                <li><a href="#" className="text-gray-600 hover:text-gray-900">Rent home</a></li>
-                <li><a href="#" className="text-gray-600 hover:text-gray-900">Builder trade-up</a></li>
-              </ul>
-            </div>
-
-            <div>
-              <h3 className="font-semibold mb-4">ABOUT</h3>
-              <ul className="space-y-2">
-                <li><a href="#" className="text-gray-600 hover:text-gray-900">Company</a></li>
-                <li><a href="#" className="text-gray-600 hover:text-gray-900">How it works</a></li>
-                <li><a href="#" className="text-gray-600 hover:text-gray-900">Contact</a></li>
-                <li><a href="#" className="text-gray-600 hover:text-gray-900">Investors</a></li>
-              </ul>
-            </div>
-          </div>
-
-          <div className="mt-12 pt-8 border-t">
-            <div className="flex flex-col md:flex-row justify-between items-center">
-              <p className="text-gray-600 mb-4 md:mb-0">©2025 Bangalore Realtors. All rights reserved</p>
-              <div className="flex space-x-6">
-                <a href="#" className="text-gray-600 hover:text-gray-900">
-                  <Instagram className="h-5 w-5" />
-                </a>
-                <a href="#" className="text-gray-600 hover:text-gray-900">
-                  <Twitter className="h-5 w-5" />
-                </a>
-                <a href="#" className="text-gray-600 hover:text-gray-900">
-                  <Linkedin className="h-5 w-5" />
-                </a>
-              </div>
-            </div>
-          </div>
-        </div>
-      </footer>
     </>
   );
 }
