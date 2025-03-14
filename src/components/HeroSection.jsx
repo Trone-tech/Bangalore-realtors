@@ -5,9 +5,10 @@ import { Link } from 'react-router-dom';
 const HeroSection = () => {
   return (
     <div className="relative min-h-[85vh] flex items-center">
-      {/* Background with gradient overlay */}
+      {/* Background with minimal black overlay */}
       <div className="absolute inset-0 z-0">
-        <div className="absolute inset-0 bg-gradient-to-r from-black/70 to-black/50 z-10" />
+        {/* Changed from gradient overlay to a solid black overlay */}
+        <div className="absolute inset-0 bg-black opacity-50 z-10" />
         <img
           src="/assets/hero-bg.jpg"
           alt="Luxury home"
@@ -18,7 +19,7 @@ const HeroSection = () => {
       {/* Content */}
       <div className="container mx-auto px-6 relative z-20">
         <div className="max-w-3xl">
-          <h1 className="text-4xl md:text-6xl font-bold text-white mb-6">
+          <h1 className="text-4xl md:text-6xl font-bold text-white mb-6 p-20">
             Find Your Dream Property in Bangalore
           </h1>
           <p className="text-xl text-gray-200 mb-8">
@@ -32,7 +33,7 @@ const HeroSection = () => {
               {/* Location */}
               <div className="relative">
                 <MapPin className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
-                <select className="input pl-10">
+                <select className="input p-15">
                   <option value="">Select Zone</option>
                   <option value="north">North Bangalore</option>
                   <option value="south">South Bangalore</option>
@@ -91,4 +92,4 @@ const HeroSection = () => {
   );
 };
 
-export default HeroSection; 
+export default HeroSection;

@@ -2,11 +2,12 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Building2, Shield, Percent, Settings, Instagram, Twitter, Linkedin, Home } from 'lucide-react';
 import HeroSection from '../components/HeroSection';
-import { getDatabase, ref, get, query, limitToFirst } from 'firebase/database';
+import { getDatabase, ref, get, Database } from 'firebase/database';
 import { app } from '../firebase';
 
 interface Property {
   id?: string;
+  title: string;
   price: string;
   location: string;
   beds: string;
@@ -15,36 +16,56 @@ interface Property {
   popular: boolean;
   region: string;
   priceNum: number;
-  title: string;
   description: string;
   amenities: string[];
+  images?: string[];
+  propertyType?: string;
+  constructionStatus?: string;
+  features?: {
+    parking: boolean;
+    garden: boolean;
+    security: boolean;
+    internet: boolean;
+    furnished: boolean;
+    airConditioning: boolean;
+  };
 }
 
-function HomePage() {
+interface FirebaseProperty extends Omit<Property, 'id'> {}
+
+const HomePage: React.FC = () => {
   const [featuredProperties, setFeaturedProperties] = useState<Property[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string>('');
 
   useEffect(() => {
     const loadFeaturedProperties = async () => {
       try {
-        const db = getDatabase(app);
+        const db: Database = getDatabase(app);
         const propertiesRef = ref(db, 'properties');
         const snapshot = await get(propertiesRef);
         
         if (snapshot.exists()) {
-          const propertiesData = snapshot.val();
+          const propertiesData = snapshot.val() as Record<string, FirebaseProperty>;
           const propertiesList = Object.entries(propertiesData)
             .map(([id, data]) => ({
               id,
-              ...(data as Omit<Property, 'id'>)
+              ...data
             }))
-            .filter(property => property.popular)
+            .filter((property): property is Property & { id: string } => 
+              property.popular === true && 
+              typeof property.title === 'string' &&
+              typeof property.price === 'string' &&
+              typeof property.id === 'string'
+            )
             .slice(0, 3);
           setFeaturedProperties(propertiesList);
+        } else {
+          setFeaturedProperties([]);
         }
-      } catch (error) {
+      } catch (err) {
         setError('Failed to load properties');
+        console.error('Error loading properties:', err);
       } finally {
         setLoading(false);
       }
@@ -68,7 +89,10 @@ function HomePage() {
                   alt="Property Illustration" 
                   className="w-full cursor-pointer transition-transform hover:scale-105"
                   onClick={() => {
-                    document.getElementById('section-3')?.scrollIntoView({ behavior: 'smooth' });
+                    const section = document.getElementById('section-3');
+                    if (section) {
+                      section.scrollIntoView({ behavior: 'smooth' });
+                    }
                   }}
                 />
               </div>
@@ -141,7 +165,11 @@ function HomePage() {
                         <span>POPULAR</span>
                       </div>
                     )}
-                    <img src="/assets/tentimage.png" alt={property.title || 'Property'} className="w-full h-52 object-cover" />
+                    <img 
+                      src={property.images?.[0] || "/assets/tentimage.png"} 
+                      alt={property.title} 
+                      className="w-full h-52 object-cover" 
+                    />
                   </div>
                   <div className="p-6">
                     <div className="flex flex-col gap-1">
@@ -150,7 +178,7 @@ function HomePage() {
                         <span className="text-2xl font-semibold">{property.price}</span>
                         <span className="text-gray-500 text-sm ml-1">/month</span>
                       </div>
-                      <h3 className="text-xl font-semibold text-gray-900">{property.title || 'Modern Apartment'}</h3>
+                      <h3 className="text-xl font-semibold text-gray-900">{property.title}</h3>
                       <p className="text-gray-500 text-sm">{property.location}</p>
                     </div>
                     <div className="flex items-center gap-6 mt-6">
@@ -237,6 +265,6 @@ function HomePage() {
       </section>
     </>
   );
-}
+};
 
 export default HomePage; 
