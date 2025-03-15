@@ -20,7 +20,10 @@ let analytics = null;
 let database;
 
 try {
+  // Initialize Firebase app
   app = initializeApp(firebaseConfig);
+  
+  // Initialize Realtime Database
   database = getDatabase(app);
   
   // Only initialize analytics in browser environment and if supported
