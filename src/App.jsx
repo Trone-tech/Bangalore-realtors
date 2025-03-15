@@ -1,24 +1,55 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Routes, Route } from 'react-router-dom';
-import Navbar from './components/Navbar';
-import HomePage from './pages/HomePage';
-import AdminDashboard from './pages/AdminDashboard';
-import AboutUs from './pages/AboutUs';
-import Footer from './components/Footer';
+import Navbar from './components/Navbar.jsx';
+import NewHomePage from './pages/NewHomePage.jsx';
+import BrowseProperties from './pages/BrowseProperties.jsx';
+import PropertyDetails from './pages/PropertyDetails.jsx';
+import AboutUs from './pages/AboutUs.jsx';
+import Footer from './components/Footer.jsx';
+import AdminLogin from './pages/AdminLogin.jsx';
+import AdminDashboard from './pages/AdminDashboard.jsx';
+import PropertyForm from './pages/PropertyForm.jsx';
+import ProtectedRoute from './components/ProtectedRoute.jsx';
+import { AuthProvider } from './contexts/AuthContext.jsx';
 
 const App = () => {
+  useEffect(() => {
+    console.log('App component mounted');
+  }, []);
+
   return (
-    <div className="min-h-screen flex flex-col">
-      <Navbar />
-      <main className="flex-grow">
-        <Routes>
-          <Route path="/" element={<HomePage />} />
-          <Route path="/admin" element={<AdminDashboard />} />
-          <Route path="/about" element={<AboutUs />} />
-        </Routes>
-      </main>
-      <Footer />
-    </div>
+    <AuthProvider>
+      <div className="min-h-screen flex flex-col bg-gray-50">
+        <Navbar />
+        <main className="flex-grow">
+          <Routes>
+            <Route path="/" element={<NewHomePage />} />
+            <Route path="/browse" element={<BrowseProperties />} />
+            <Route path="/property/:id" element={<PropertyDetails />} />
+            <Route path="/about" element={<AboutUs />} />
+            
+            {/* Admin Routes */}
+            <Route path="/admin/login" element={<AdminLogin />} />
+            <Route path="/admin/dashboard" element={
+              <ProtectedRoute>
+                <AdminDashboard />
+              </ProtectedRoute>
+            } />
+            <Route path="/admin/properties/new" element={
+              <ProtectedRoute>
+                <PropertyForm />
+              </ProtectedRoute>
+            } />
+            <Route path="/admin/properties/edit/:id" element={
+              <ProtectedRoute>
+                <PropertyForm />
+              </ProtectedRoute>
+            } />
+          </Routes>
+        </main>
+        <Footer />
+      </div>
+    </AuthProvider>
   );
 };
 

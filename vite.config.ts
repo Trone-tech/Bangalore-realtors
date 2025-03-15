@@ -9,7 +9,9 @@ export default defineConfig({
     include: [
       'firebase/app',
       'firebase/auth',
-      'firebase/database'
+      'firebase/database',
+      'react',
+      'react-dom'
     ],
     esbuildOptions: {
       define: {
@@ -19,10 +21,18 @@ export default defineConfig({
   },
   resolve: {
     alias: {
+      '@': resolve(__dirname, './src'),
       'firebase': resolve(__dirname, 'node_modules/firebase')
-    }
+    },
+    extensions: ['.js', '.jsx', '.ts', '.tsx']
+  },
+  server: {
+    port: 5173,
+    open: true
   },
   build: {
+    outDir: 'dist',
+    sourcemap: true,
     rollupOptions: {
       external: [
         '@firebase/util',
