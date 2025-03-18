@@ -130,6 +130,9 @@ const PropertyDetails = () => {
   // Use fallback property if no property data is available
   const propertyData = property || fallbackProperty;
   
+  // Omit 'Beds' field for non-house listings
+  const isResidential = ['house', 'apartment', 'villa'].includes(propertyData.propertyType);
+  
   return (
     <div className="bg-white min-h-screen">
       <div className="container mx-auto px-4 py-8 max-w-5xl">
@@ -322,7 +325,7 @@ const PropertyDetails = () => {
           <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
             <div>
               <p className="text-gray-500 text-sm">Property Type</p>
-              <p className="font-medium">Commercial Plot</p>
+              <p className="font-medium">{propertyData.propertyType}</p>
             </div>
             <div>
               <p className="text-gray-500 text-sm">Zone</p>
@@ -360,6 +363,12 @@ const PropertyDetails = () => {
               <p className="text-gray-500 text-sm">Transaction Type</p>
               <p className="font-medium">{propertyData.details.transactionType}</p>
             </div>
+            {isResidential && (
+              <div>
+                <p className="text-gray-500 text-sm">Beds</p>
+                <p className="font-medium">{propertyData.beds}</p>
+              </div>
+            )}
           </div>
         </div>
         
@@ -384,17 +393,22 @@ const PropertyDetails = () => {
           <p className="text-gray-700 mb-2">{propertyData.address.full}</p>
           <p className="text-gray-600 mb-4">Landmark: {propertyData.address.landmark}</p>
           
-          {/* Map */}
+          {/* Google Maps Link */}
+          <div className="mb-4">
+            <a 
+              href={propertyData.mapLink || `https://www.google.com/maps/search/${encodeURIComponent(propertyData.address.full)}`} 
+              target="_blank" 
+              rel="noopener noreferrer" 
+              className="inline-flex items-center px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition-colors"
+            >
+              <MapPin className="h-4 w-4 mr-2" />
+              View on Google Maps
+            </a>
+          </div>
+          
+          {/* Static Image */}
           <div className="mt-4 h-64 bg-gray-100 rounded-lg overflow-hidden">
-            <iframe 
-              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3887.3661649207335!2d77.63447491482266!3d13.015878990825367!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3bae17b55c78974d%3A0x6e9c91c1c48d09a7!2sHRBR%20Layout%2C%20Kalyan%20Nagar%2C%20Bengaluru%2C%20Karnataka!5e0!3m2!1sen!2sin!4v1625647618976!5m2!1sen!2sin" 
-              width="100%" 
-              height="100%" 
-              style={{ border: 0 }} 
-              allowFullScreen="" 
-              loading="lazy"
-              title="Property Location"
-            ></iframe>
+            <img src="/assets/static-map.png" alt="Static Map" className="w-full h-full object-cover" />
           </div>
         </div>
       </div>

@@ -44,6 +44,12 @@ const AnimatedPropertyCard = ({ property, index = 0 }) => {
     return property.listingType === 'rent' ? '/month' : '';
   };
 
+  // Check if the property is a residential property (house, apartment, villa)
+  const isResidential = () => {
+    const residentialTypes = ['house', 'apartment', 'villa'];
+    return residentialTypes.includes(property.propertyType?.toLowerCase());
+  };
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 50 }}
@@ -145,16 +151,20 @@ const AnimatedPropertyCard = ({ property, index = 0 }) => {
           </div>
           
           {/* Amenities */}
-          <div className="grid grid-cols-3 gap-2 mb-4">
-            <div className="text-center p-2 bg-gray-50 rounded-lg">
-              <p className="text-xs text-gray-500">Beds</p>
-              <p className="font-medium">{getBedsText(property)}</p>
-            </div>
-            <div className="text-center p-2 bg-gray-50 rounded-lg">
-              <p className="text-xs text-gray-500">Baths</p>
-              <p className="font-medium">{getBathsText(property)}</p>
-            </div>
-            <div className="text-center p-2 bg-gray-50 rounded-lg">
+          <div className={`grid ${isResidential() ? 'grid-cols-3' : 'grid-cols-1'} gap-2 mb-4`}>
+            {isResidential() && (
+              <>
+                <div className="text-center p-2 bg-gray-50 rounded-lg">
+                  <p className="text-xs text-gray-500">Beds</p>
+                  <p className="font-medium">{getBedsText(property)}</p>
+                </div>
+                <div className="text-center p-2 bg-gray-50 rounded-lg">
+                  <p className="text-xs text-gray-500">Baths</p>
+                  <p className="font-medium">{getBathsText(property)}</p>
+                </div>
+              </>
+            )}
+            <div className={`text-center p-2 bg-gray-50 rounded-lg ${!isResidential() ? 'col-span-1' : ''}`}>
               <p className="text-xs text-gray-500">Area</p>
               <p className="font-medium">{getAreaText(property)}</p>
             </div>

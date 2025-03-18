@@ -33,7 +33,6 @@ const BrowseProperties = () => {
   // State for UI
   const [showFilters, setShowFilters] = useState(false);
   const [searchInput, setSearchInput] = useState(filters.location);
-  const [viewMode, setViewMode] = useState('grid'); // 'grid' or 'map'
   const [showZoneDropdown, setShowZoneDropdown] = useState(false);
   const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
   
@@ -192,7 +191,7 @@ const BrowseProperties = () => {
   };
   
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col">
+    <div className="min-h-screen flex flex-col bg-gray-50">
       <div className="flex-grow">
         {/* Mobile Sidebar Toggle - New for responsive design */}
         <div className="md:hidden bg-white sticky top-0 z-20 px-4 py-2 border-b shadow-sm flex justify-between items-center">
@@ -392,34 +391,6 @@ const BrowseProperties = () => {
                   )}
                 </div>
               </div>
-              
-              {/* View Mode Toggle */}
-              <div className="mt-4 flex justify-end">
-                <div className="bg-gray-100 rounded-lg p-1 inline-flex">
-                  <button
-                    type="button"
-                    onClick={() => setViewMode('grid')}
-                    className={`px-4 py-1 rounded text-sm ${
-                      viewMode === 'grid' 
-                        ? 'bg-white shadow-sm text-indigo-600' 
-                        : 'text-gray-600'
-                    }`}
-                  >
-                    Grid View
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setViewMode('map')}
-                    className={`px-4 py-1 rounded text-sm ${
-                      viewMode === 'map' 
-                        ? 'bg-white shadow-sm text-indigo-600' 
-                        : 'text-gray-600'
-                    }`}
-                  >
-                    Map View
-                  </button>
-                </div>
-              </div>
             </form>
           </div>
           
@@ -438,47 +409,38 @@ const BrowseProperties = () => {
             ))}
           </div>
           
-          {/* Map View */}
-          {viewMode === 'map' && (
-            <div className="mb-12">
-              <InteractiveMap properties={properties} height="600px" />
-            </div>
-          )}
-          
           {/* Properties Grid */}
-          {viewMode === 'grid' && (
-            <div className="mb-12">
-              {loading ? (
-                <div className="flex justify-center items-center py-12">
-                  <Loader size={24} className="animate-spin text-indigo-600 mr-2" />
-                  <span>Loading properties...</span>
-                </div>
-              ) : error ? (
-                <div className="bg-red-50 p-4 rounded-md text-red-800 mb-6">
-                  <p>{error}</p>
-                </div>
-              ) : properties.length === 0 ? (
-                <div className="bg-white rounded-lg shadow-sm p-12 text-center">
-                  <h3 className="text-xl font-semibold text-gray-800 mb-2">No properties found</h3>
-                  <p className="text-gray-600 mb-6">
-                    We couldn't find any properties matching your search criteria.
-                  </p>
-                  <button
-                    onClick={resetFilters}
-                    className="px-6 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700"
-                  >
-                    Reset Filters
-                  </button>
-                </div>
-              ) : (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                  {properties.map((property, index) => (
-                    <AnimatedPropertyCard key={property.id} property={property} index={index} />
-                  ))}
-                </div>
-              )}
-            </div>
-          )}
+          <div className="mb-12">
+            {loading ? (
+              <div className="flex justify-center items-center py-12">
+                <Loader size={24} className="animate-spin text-indigo-600 mr-2" />
+                <span>Loading properties...</span>
+              </div>
+            ) : error ? (
+              <div className="bg-red-50 p-4 rounded-md text-red-800 mb-6">
+                <p>{error}</p>
+              </div>
+            ) : properties.length === 0 ? (
+              <div className="bg-white rounded-lg shadow-sm p-12 text-center">
+                <h3 className="text-xl font-semibold text-gray-800 mb-2">No properties found</h3>
+                <p className="text-gray-600 mb-6">
+                  We couldn't find any properties matching your search criteria.
+                </p>
+                <button
+                  onClick={resetFilters}
+                  className="px-6 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700"
+                >
+                  Reset Filters
+                </button>
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {properties.map((property, index) => (
+                  <AnimatedPropertyCard key={property.id} property={property} index={index} />
+                ))}
+              </div>
+            )}
+          </div>
         </div>
       </div>
       
