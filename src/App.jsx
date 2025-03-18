@@ -3,6 +3,8 @@ import { Routes, Route } from 'react-router-dom';
 import Navbar from './components/Navbar.jsx';
 import NewHomePage from './pages/NewHomePage.jsx';
 import BrowseProperties from './pages/BrowseProperties.jsx';
+import BuyProperties from './pages/BuyProperties.jsx';
+import RentProperties from './pages/RentProperties.jsx';
 import PropertyDetails from './pages/PropertyDetails.jsx';
 import AboutUs from './pages/AboutUs.jsx';
 import Footer from './components/Footer.jsx';
@@ -25,6 +27,8 @@ const App = () => {
           <Routes>
             <Route path="/" element={<NewHomePage />} />
             <Route path="/browse" element={<BrowseProperties />} />
+            <Route path="/buy" element={<BuyProperties />} />
+            <Route path="/rent" element={<RentProperties />} />
             <Route path="/property/:id" element={<PropertyDetails />} />
             <Route path="/about" element={<AboutUs />} />
             

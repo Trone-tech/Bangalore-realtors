@@ -15,9 +15,9 @@ interface NavLink {
  * Order of the links determines their display order in the navigation menus.
  */
 export const NavLinks: NavLink[] = [
-  { label: 'Rent', path: '/browse' },
-  { label: 'Buy', path: '/browse' },
-  { label: 'Sell', path: '/browse' },
+  { label: 'Rent', path: '/rent' },
+  { label: 'Buy', path: '/buy' },
+  { label: 'Sell', path: '/admin/properties/new' },
   { label: 'About Us', path: '/about' },
   { label: 'Admin', path: '/admin/dashboard' }
 ]; 

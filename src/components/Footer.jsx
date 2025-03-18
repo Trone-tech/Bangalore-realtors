@@ -52,16 +52,16 @@ const Footer = () => {
                 <Link to="/" className="text-gray-400 hover:text-white transition-colors">Home</Link>
               </li>
               <li>
-                <Link to="/properties" className="text-gray-400 hover:text-white transition-colors">Browse Properties</Link>
+                <Link to="/buy" className="text-gray-400 hover:text-white transition-colors">Buy</Link>
+              </li>
+              <li>
+                <Link to="/rent" className="text-gray-400 hover:text-white transition-colors">Rent</Link>
               </li>
               <li>
                 <Link to="/about" className="text-gray-400 hover:text-white transition-colors">About Us</Link>
               </li>
               <li>
-                <Link to="/contact" className="text-gray-400 hover:text-white transition-colors">Contact</Link>
-              </li>
-              <li>
-                <Link to="/login" className="text-gray-400 hover:text-white transition-colors">Login</Link>
+                <Link to="/admin/login" className="text-gray-400 hover:text-white transition-colors">Admin</Link>
               </li>
             </ul>
           </motion.div>
@@ -77,19 +77,19 @@ const Footer = () => {
             <h3 className="text-xl font-bold">Popular Areas</h3>
             <ul className="space-y-2">
               <li>
-                <Link to="/properties?zones=North%20Bangalore" className="text-gray-400 hover:text-white transition-colors">North Bangalore</Link>
+                <Link to="/buy?zone=North%20Bangalore" className="text-gray-400 hover:text-white transition-colors">North Bangalore</Link>
               </li>
               <li>
-                <Link to="/properties?zones=South%20Bangalore" className="text-gray-400 hover:text-white transition-colors">South Bangalore</Link>
+                <Link to="/buy?zone=South%20Bangalore" className="text-gray-400 hover:text-white transition-colors">South Bangalore</Link>
               </li>
               <li>
-                <Link to="/properties?zones=East%20Bangalore" className="text-gray-400 hover:text-white transition-colors">East Bangalore</Link>
+                <Link to="/buy?zone=East%20Bangalore" className="text-gray-400 hover:text-white transition-colors">East Bangalore</Link>
               </li>
               <li>
-                <Link to="/properties?zones=West%20Bangalore" className="text-gray-400 hover:text-white transition-colors">West Bangalore</Link>
+                <Link to="/buy?zone=West%20Bangalore" className="text-gray-400 hover:text-white transition-colors">West Bangalore</Link>
               </li>
               <li>
-                <Link to="/properties?zones=Central%20Bangalore" className="text-gray-400 hover:text-white transition-colors">Central Bangalore</Link>
+                <Link to="/buy?zone=Central%20Bangalore" className="text-gray-400 hover:text-white transition-colors">Central Bangalore</Link>
               </li>
             </ul>
           </motion.div>
