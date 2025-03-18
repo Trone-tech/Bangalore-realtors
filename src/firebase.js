@@ -4,7 +4,7 @@ import { getDatabase, ref, push, serverTimestamp } from 'firebase/database';
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
-  apiKey: "AIzaSyCN8BqblbSor5vUu6WR3fTReJMPcEg",  // Even though we're not using Auth, this is needed for RTDB
+  apiKey: "AIzaSyCN8BqblbSor5vUu6WR3fTReJMPcEgR5Z8",  // Fixed the truncated API key
   authDomain: "trone-tech.firebaseapp.com",
   projectId: "trone-tech",
   storageBucket: "trone-tech.appspot.com",
