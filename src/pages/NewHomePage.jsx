@@ -78,7 +78,7 @@ const NewHomePage = () => {
   const handleSearch = (e) => {
     e.preventDefault();
     if (searchQuery.trim()) {
-      window.location.href = `/browse?location=${encodeURIComponent(searchQuery)}`;
+      window.location.href = `/buy?location=${encodeURIComponent(searchQuery)}`;
     }
   };
 
@@ -98,7 +98,7 @@ const NewHomePage = () => {
         </div>
       </div>
       <Link 
-        to="/browse" 
+        to="/buy" 
         className="mt-2 text-xs text-indigo-600 hover:text-indigo-800 flex items-center justify-end"
       >
         View details <ArrowRight className="ml-1 h-3 w-3" />
@@ -241,7 +241,7 @@ const NewHomePage = () => {
                               </div>
                             </div>
                             <Link 
-                              to="/browse" 
+                              to="/buy" 
                               className="mt-2 text-xs text-indigo-600 hover:text-indigo-800 flex items-center justify-end"
                             >
                               View details <ArrowRight className="ml-1 h-3 w-3" />
@@ -338,7 +338,7 @@ const NewHomePage = () => {
             
             <div className="text-center mt-12">
               <Link 
-                to="/browse"
+                to="/buy"
                 className="bg-indigo-600 hover:bg-indigo-700 text-white px-8 py-3 rounded-full font-medium inline-flex items-center transition-all duration-300 hover:shadow-lg transform hover:scale-105"
               >
                 View All Properties
@@ -441,14 +441,14 @@ const NewHomePage = () => {
               </div>
               <div className="flex flex-wrap gap-4 justify-center">
                 <Link 
-                  to="/browse?listingType=sale" 
+                  to="/buy" 
                   className="bg-white text-indigo-600 px-6 py-3 rounded-lg font-medium inline-flex items-center shadow-lg hover:bg-gray-100 transition-colors duration-300"
                 >
                   <Home className="mr-2 h-5 w-5" />
                   Buy Property
                 </Link>
                 <Link 
-                  to="/browse?listingType=rent" 
+                  to="/rent" 
                   className="bg-transparent text-white border-2 border-white px-6 py-3 rounded-lg font-medium inline-flex items-center hover:bg-white hover:text-indigo-600 transition-colors duration-300"
                 >
                   <Building className="mr-2 h-5 w-5" />
