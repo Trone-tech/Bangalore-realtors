@@ -99,46 +99,66 @@ const PropertyForm = () => {
     'Swimming Pool', 'Gym', 'Club House', 'Children\'s Play Area'
   ];
   
+  // Add console log for debugging
+  useEffect(() => {
+    console.log("PropertyForm component mounted");
+    console.log("isEditMode:", isEditMode);
+    console.log("currentUser:", currentUser);
+    
+    return () => {
+      console.log("PropertyForm component unmounted");
+    };
+  }, [isEditMode, currentUser]);
+  
   // Fetch property data if in edit mode
   useEffect(() => {
-    const fetchPropertyData = async () => {
-      try {
-        if (isEditMode) {
-          const property = await adminService.getPropertyById(id);
-          if (property) {
-            // Transform property data to match form structure
-            setFormData({
-              ...property,
-              // Ensure all required nested objects exist
-              details: property.details || {
-                length: '',
-                width: '',
-                facing: 'East',
-                roadWidth: '',
-                ownership: 'Freehold',
-                approvals: '',
-                transactionType: 'New Property',
-                possessionStatus: 'Ready to Move'
-              },
-              address: property.address || {
-                full: '',
-                landmark: ''
-              }
-            });
-          } else {
-            setError('Property not found');
-          }
-        }
+    if (isEditMode) {
+      const fetchPropertyData = async () => {
+        setLoading(true);
+        setError(null);
         
-        setLoading(false);
-      } catch (err) {
-        console.error('Error initializing property form:', err);
-        setError('Failed to load property data. Please try again.');
-        setLoading(false);
-      }
-    };
-    
-    fetchPropertyData();
+        try {
+          console.log(`Fetching property with ID: ${id}`);
+          const propertyData = await adminService.getPropertyById(id);
+          
+          if (propertyData) {
+            // Ensure all required properties exist in the data
+            const completeData = {
+              ...formData, // Default values
+              ...propertyData, // Overwrite with actual data
+              details: {
+                ...formData.details, // Default details
+                ...(propertyData.details || {}) // Overwrite with actual details if any
+              },
+              address: {
+                ...formData.address, // Default address
+                ...(propertyData.address || {}) // Overwrite with actual address if any
+              },
+              contact: {
+                ...formData.contact, // Default contact
+                ...(propertyData.contact || {}) // Overwrite with actual contact if any
+              }
+            };
+            
+            // Ensure images array exists
+            if (!completeData.images || !Array.isArray(completeData.images) || completeData.images.length === 0) {
+              completeData.images = [''];
+            }
+            
+            setFormData(completeData);
+          } else {
+            throw new Error('Property not found');
+          }
+        } catch (err) {
+          console.error('Error fetching property data:', err);
+          setError('Failed to load property data. Please try again.');
+        } finally {
+          setLoading(false);
+        }
+      };
+      
+      fetchPropertyData();
+    }
   }, [id, isEditMode]);
   
   // Handle input changes
@@ -189,72 +209,70 @@ const PropertyForm = () => {
     setFormData({ ...formData, images: updatedImages.length ? updatedImages : [''] });
   };
   
-  // Handle form submission
+  // Form submission handler
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError(null);
+    console.log("Form submitted");
     setLoading(true);
+    setError(null);
     
     try {
+      console.log("Starting form validation and submission");
+      
+      // Convert price to string if it's not already
+      const formDataCopy = {
+        ...formData,
+        price: formData.price.toString()
+      };
+      
       // Validate required fields
-      const requiredFields = ['title', 'location', 'price', 'propertyType', 'area'];
-      const missingFields = requiredFields.filter(field => !formData[field]);
+      const requiredFields = ['title', 'location', 'price', 'propertyType', 'zone'];
+      const missingFields = requiredFields.filter(field => !formDataCopy[field]);
       
       if (missingFields.length > 0) {
         throw new Error(`Please fill in all required fields: ${missingFields.join(', ')}`);
       }
       
-      // Validate nested required fields
-      if (!formData.address.full) {
-        throw new Error('Please enter the full address');
+      // Validate email format if provided
+      if (formDataCopy.contact?.email) {
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(formDataCopy.contact.email)) {
+          throw new Error('Please enter a valid email address');
+        }
       }
       
-      // Validate required contact fields
-      if (!formData.contact.name) {
-        throw new Error('Please enter a contact person name');
+      // Remove any undefined or null values
+      const cleanedData = Object.fromEntries(
+        Object.entries(formDataCopy).filter(([_, v]) => v !== null && v !== undefined)
+      );
+      
+      // Filter out empty images
+      cleanedData.images = (cleanedData.images || []).filter(url => url && url.trim() !== '');
+      
+      // Ensure there's at least one image
+      if (!cleanedData.images || cleanedData.images.length === 0) {
+        cleanedData.images = ['/assets/tentimage.png'];
       }
       
-      if (!formData.contact.phone) {
-        throw new Error('Please enter a phone number');
-      }
+      // Make sure nested objects are defined
+      cleanedData.details = cleanedData.details || {};
+      cleanedData.address = cleanedData.address || {};
+      cleanedData.contact = cleanedData.contact || {};
       
-      if (!formData.contact.email) {
-        throw new Error('Please enter an email address');
-      }
+      console.log("About to save property with data:", cleanedData);
       
-      // Validate email format
-      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-      if (!emailRegex.test(formData.contact.email)) {
-        throw new Error('Please enter a valid email address');
-      }
-      
-      // Remove empty image URLs
-      const cleanedData = {
-        ...formData,
-        images: formData.images.filter(url => url.trim() !== '')
-      };
-      
-      // Set WhatsApp number to phone number if not provided
-      if (!cleanedData.contact.whatsapp && cleanedData.contact.phone) {
-        cleanedData.contact.whatsapp = cleanedData.contact.phone;
-      }
-      
-      // Ensure price is a number
-      if (typeof cleanedData.price === 'string') {
-        cleanedData.price = parseInt(cleanedData.price.replace(/[^\d]/g, '')) || 0;
-      }
-      
-      // Ensure area is a number
-      if (typeof cleanedData.area === 'string') {
-        cleanedData.area = parseInt(cleanedData.area.replace(/[^\d]/g, '')) || 0;
-      }
-      
+      // Save the property
       if (isEditMode) {
-        await adminService.updateProperty(id, cleanedData);
+        console.log(`Updating property with ID: ${id}`);
+        const updatedProperty = await adminService.updateProperty(id, cleanedData);
+        console.log("Property updated successfully:", updatedProperty);
       } else {
-        await adminService.createProperty(cleanedData);
+        console.log("Creating new property");
+        const newProperty = await adminService.createProperty(cleanedData);
+        console.log("Property created successfully:", newProperty);
       }
       
+      console.log("Navigating to dashboard");
       navigate('/admin/dashboard');
     } catch (err) {
       console.error('Error saving property:', err);

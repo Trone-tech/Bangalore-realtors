@@ -18,5 +18,6 @@ export const NavLinks: NavLink[] = [
   { label: 'Rent', path: '/browse' },
   { label: 'Buy', path: '/browse' },
   { label: 'Sell', path: '/browse' },
-  { label: 'About Us', path: '/about' }
+  { label: 'About Us', path: '/about' },
+  { label: 'Admin', path: '/admin/dashboard' }
 ]; 

@@ -35,6 +35,16 @@ const App = () => {
                 <AdminDashboard />
               </ProtectedRoute>
             } />
+            <Route path="/add-property" element={
+              <ProtectedRoute>
+                <PropertyForm />
+              </ProtectedRoute>
+            } />
+            <Route path="/edit-property/:id" element={
+              <ProtectedRoute>
+                <PropertyForm />
+              </ProtectedRoute>
+            } />
             <Route path="/admin/properties/new" element={
               <ProtectedRoute>
                 <PropertyForm />
