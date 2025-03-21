@@ -13,13 +13,6 @@ const NewHomePage = () => {
   const [error, setError] = useState(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [featuredViewMode, setFeaturedViewMode] = useState('grid');
-  const [hoveredProperty, setHoveredProperty] = useState(null);
-
-  const mapMarkers = [
-    { id: 1, x: 25, y: 35, property: { title: "Luxury Villa", location: "North Bangalore", price: 9500000, beds: 4, baths: 3, propertyType: "villa" } },
-    { id: 2, x: 65, y: 45, property: { title: "Modern Apartment", location: "South Bangalore", price: 7200000, beds: 3, baths: 2, propertyType: "apartment" } },
-    { id: 3, x: 50, y: 70, property: { title: "Garden House", location: "East Bangalore", price: 8100000, beds: 4, baths: 3, propertyType: "house" } },
-  ];
 
   useEffect(() => {
     const fetchProperties = async () => {
@@ -82,188 +75,130 @@ const NewHomePage = () => {
     }
   };
 
-  // Compact property card component - improved for mobile responsiveness
-  const CompactPropertyCard = ({ property }) => (
-    <div className="absolute z-20 bg-white rounded-lg shadow-xl p-3 w-56 sm:w-64 transform -translate-x-28 sm:-translate-x-32 -translate-y-[8rem] sm:-translate-y-[9rem] transition-all duration-200 hover:scale-105">
-      <div className="font-semibold text-gray-900 mb-1 truncate text-xs sm:text-sm">{property.title}</div>
-      <div className="flex items-center text-xs text-gray-600 mb-2">
-        <MapPin className="h-3 w-3 mr-1 text-indigo-500" />
-        <span className="truncate text-xs">{property.location}</span>
-      </div>
-      <div className="flex justify-between items-center">
-        <div className="text-indigo-600 font-bold text-xs sm:text-sm">{formatPrice(property.price)}</div>
-        <div className="flex items-center text-xs text-gray-500">
-          <span className="mr-2">{property.beds} bed</span>
-          <span>{property.baths} bath</span>
-        </div>
-      </div>
-      <Link 
-        to="/buy" 
-        className="mt-2 text-xs text-indigo-600 hover:text-indigo-800 flex items-center justify-end"
-      >
-        View details <ArrowRight className="ml-1 h-3 w-3" />
-      </Link>
-    </div>
-  );
-
-  // Function to handle mobile marker click
-  const handleMarkerClick = (id) => {
-    if (window.innerWidth < 768) {
-      setHoveredProperty(hoveredProperty === id ? null : id);
-    }
-  };
-
-  // Add custom styles for different screen sizes
-  const getCardPosition = (id) => {
-    // Adjust card position based on marker location and screen size
-    if (window.innerWidth < 640) { // Small mobile screens
-      return {
-        transform: 'translate(-50%, -100%)',
-        left: '50%',
-        top: '-5px',
-        width: '180px'
-      };
-    } else {
-      // Default positioning for larger screens
-      return {};
-    }
-  };
-
   return (
     <div className="min-h-screen flex flex-col bg-white">
       <div className="flex-grow">
-        {/* Hero Section with Map */}
-        <div className="relative bg-gradient-to-r from-indigo-50 to-blue-50 overflow-hidden">
-          <div className="absolute inset-0 z-0 opacity-20">
-            <div className="absolute top-20 left-20 w-40 h-40 bg-indigo-300 rounded-full filter blur-3xl animate-blob"></div>
-            <div className="absolute bottom-20 right-20 w-40 h-40 bg-blue-300 rounded-full filter blur-3xl animate-blob animation-delay-2000"></div>
-            <div className="absolute top-1/2 left-1/2 w-40 h-40 bg-purple-300 rounded-full filter blur-3xl animate-blob animation-delay-4000"></div>
-          </div>
+        {/* Hero Section with Map Background */}
+        <div 
+          style={{ 
+            position: 'relative',
+            minHeight: '600px',
+            backgroundImage: 'url(/assets/total_map.png)',
+            backgroundSize: 'cover',
+            backgroundPosition: 'center'
+          }}
+        >
+          {/* Overlay for better text readability */}
+          <div style={{
+            position: 'absolute',
+            inset: 0,
+            backgroundColor: 'rgba(0, 0, 0, 0.4)'
+          }}></div>
           
-          <div className="container mx-auto px-4 py-12 md:py-20 relative z-10">
-            <div className="max-w-6xl mx-auto">
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center">
-                {/* Left Column - Text and Search */}
-                <div className="pr-0 lg:pr-8 animate-fadeIn order-2 lg:order-1">
-                  <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 mb-4 md:mb-6 leading-tight">
-                    Find Your <span className="text-indigo-600">Dream Home</span> in Bangalore
-                  </h1>
-                  <p className="text-gray-600 text-lg mb-8 max-w-xl">
-                    Discover the perfect property in Bangalore's most sought-after neighborhoods. No commission, no hassle.
-                  </p>
-                  
-                  {/* Search Bar */}
-                  <div className="bg-white p-2 rounded-full shadow-lg mb-10 flex items-center max-w-lg transition-all duration-300 hover:shadow-xl">
-                    <form onSubmit={handleSearch} className="flex w-full">
-                      <div className="flex items-center px-4 flex-grow">
-                        <MapPin className="text-indigo-500 mr-2 h-5 w-5" />
-                        <input 
-                          type="text" 
-                          placeholder="Search by location, e.g., Koramangala..." 
-                          className="w-full outline-none text-gray-700"
-                          value={searchQuery}
-                          onChange={(e) => setSearchQuery(e.target.value)}
-                        />
-                      </div>
-                      <button 
-                        type="submit" 
-                        className="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-3 rounded-full flex items-center transition-all duration-300 transform hover:scale-105"
-                      >
-                        <Search className="mr-2 h-4 w-4" />
-                        <span>Search</span>
-                      </button>
-                    </form>
-                  </div>
-                  
-                  {/* Stats with animations */}
-                  <div className="flex flex-wrap gap-4 md:gap-12 mb-8">
-                    <div className="bg-white p-4 rounded-lg shadow-sm animate-fadeInUp animation-delay-300">
-                      <h3 className="text-3xl font-bold text-indigo-600">50k+</h3>
-                      <p className="text-sm text-gray-500">Happy Clients</p>
-                    </div>
-                    <div className="bg-white p-4 rounded-lg shadow-sm animate-fadeInUp animation-delay-600">
-                      <h3 className="text-3xl font-bold text-indigo-600">10k+</h3>
-                      <p className="text-sm text-gray-500">Premium Properties</p>
-                    </div>
-                    <div className="bg-white p-4 rounded-lg shadow-sm animate-fadeInUp animation-delay-900">
-                      <h3 className="text-3xl font-bold text-indigo-600">15+</h3>
-                      <p className="text-sm text-gray-500">Years of Experience</p>
-                    </div>
-                  </div>
+          <div style={{
+            position: 'relative',
+            zIndex: 10,
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'center',
+            minHeight: '600px',
+            margin: '0',
+            padding: '48px 0 48px 8%'
+          }}>
+            <div style={{
+              maxWidth: '768px',
+              margin: '0',
+              textAlign: 'left'
+            }}>
+              <motion.h1 
+                style={{
+                  fontSize: 'clamp(1.875rem, 5vw, 3.75rem)',
+                  fontWeight: 'bold',
+                  color: 'white',
+                  marginBottom: '24px',
+                  lineHeight: '1.2'
+                }}
+                initial={{ opacity: 0, y: -20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5 }}
+              >
+                Buy, rent, or sell your property easily
+              </motion.h1>
+              <motion.p 
+                style={{
+                  color: '#e5e7eb',
+                  fontSize: 'clamp(1.125rem, 3vw, 1.25rem)',
+                  marginBottom: '40px' /* Reduced margin for button */
+                }}
+                initial={{ opacity: 0, y: -20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.2 }}
+              >
+                A great platform to buy, sell or even rent your properties.
+              </motion.p>
+              
+              {/* Browse Properties Button */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.3 }}
+              >
+                <Link 
+                  to="/buy" 
+                  style={{
+                    display: 'inline-block',
+                    padding: '14px 32px',
+                    backgroundColor: '#4f46e5',
+                    color: 'white',
+                    borderRadius: '8px',
+                    fontWeight: '600',
+                    fontSize: '1.125rem',
+                    textDecoration: 'none',
+                    textAlign: 'center',
+                    transition: 'all 300ms',
+                    boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)'
+                  }}
+                  onMouseOver={(e) => {
+                    e.currentTarget.style.backgroundColor = '#4338ca';
+                    e.currentTarget.style.transform = 'translateY(-2px)';
+                  }}
+                  onMouseOut={(e) => {
+                    e.currentTarget.style.backgroundColor = '#4f46e5';
+                    e.currentTarget.style.transform = 'translateY(0)';
+                  }}
+                >
+                  Browse properties
+                </Link>
+              </motion.div>
+              
+              {/* Stats with animations */}
+              <motion.div 
+                style={{
+                  display: 'flex',
+                  flexWrap: 'wrap',
+                  justifyContent: 'flex-start',
+                  gap: '16px',
+                  marginTop: '40px'
+                }}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.5 }}
+              >
+                <div style={{ backgroundColor: 'rgba(255, 255, 255, 0.9)', padding: '16px', borderRadius: '8px', boxShadow: '0 1px 2px 0 rgba(0, 0, 0, 0.05)' }}>
+                  <h3 style={{ fontSize: '1.5rem', fontWeight: 'bold', color: '#4f46e5' }}>50k+</h3>
+                  <p style={{ fontSize: '0.875rem', color: '#4b5563' }}>Happy Clients</p>
                 </div>
-                
-                {/* Right Column - Map Image with Markers */}
-                <div className="relative animate-fadeInRight order-1 lg:order-2">
-                  <div className="relative w-full rounded-2xl shadow-2xl overflow-hidden">
-                    <img 
-                      src="/assets/map.png" 
-                      alt="Bangalore Property Map" 
-                      className="w-full h-auto object-cover"
-                    />
-                    
-                    {/* Map Markers with Popups */}
-                    {mapMarkers.map((marker) => (
-                      <div 
-                        key={marker.id} 
-                        className="absolute cursor-pointer transform transition-transform hover:scale-110"
-                        style={{ left: `${marker.x}%`, top: `${marker.y}%` }}
-                        onMouseEnter={() => setHoveredProperty(marker.id)}
-                        onMouseLeave={() => window.innerWidth >= 768 ? setHoveredProperty(null) : null}
-                        onClick={() => handleMarkerClick(marker.id)}
-                      >
-                        <div className="bg-indigo-600 h-4 w-4 sm:h-5 sm:w-5 rounded-full flex items-center justify-center shadow-md">
-                          <div className="bg-white h-1.5 w-1.5 sm:h-2 sm:w-2 rounded-full"></div>
-                        </div>
-                        
-                        {/* Pulsing Effect */}
-                        <div className="absolute top-0 left-0 h-4 w-4 sm:h-5 sm:w-5 rounded-full bg-indigo-400 opacity-70 animate-ping"></div>
-                        
-                        {/* Compact Property Card - Only show when hovered/clicked */}
-                        {hoveredProperty === marker.id && (
-                          <div className="absolute z-20 bg-white rounded-lg shadow-xl p-3 transform transition-all duration-200 hover:scale-105"
-                               style={{
-                                 width: window.innerWidth < 640 ? '180px' : (window.innerWidth < 768 ? '220px' : '250px'),
-                                 ...(window.innerWidth < 640 
-                                   ? { left: '-90px', top: '-120px' } 
-                                   : { left: '-125px', top: '-150px' })
-                               }}
-                          >
-                            <div className="font-semibold text-gray-900 mb-1 truncate text-xs sm:text-sm">{marker.property.title}</div>
-                            <div className="flex items-center text-xs text-gray-600 mb-2">
-                              <MapPin className="h-3 w-3 mr-1 text-indigo-500" />
-                              <span className="truncate text-xs">{marker.property.location}</span>
-                            </div>
-                            <div className="flex justify-between items-center">
-                              <div className="text-indigo-600 font-bold text-xs sm:text-sm">{formatPrice(marker.property.price)}</div>
-                              <div className="flex items-center text-xs text-gray-500">
-                                <span className="mr-2">{marker.property.beds} bed</span>
-                                <span>{marker.property.baths} bath</span>
-                              </div>
-                            </div>
-                            <Link 
-                              to="/buy" 
-                              className="mt-2 text-xs text-indigo-600 hover:text-indigo-800 flex items-center justify-end"
-                            >
-                              View details <ArrowRight className="ml-1 h-3 w-3" />
-                            </Link>
-                          </div>
-                        )}
-                      </div>
-                    ))}
-                  </div>
-                  
-                  {/* Mobile Instructions */}
-                  <div className="md:hidden text-center mt-3 text-xs text-gray-500 italic">
-                    Tap on markers to view property details
-                  </div>
+                <div style={{ backgroundColor: 'rgba(255, 255, 255, 0.9)', padding: '16px', borderRadius: '8px', boxShadow: '0 1px 2px 0 rgba(0, 0, 0, 0.05)' }}>
+                  <h3 style={{ fontSize: '1.5rem', fontWeight: 'bold', color: '#4f46e5' }}>10k+</h3>
+                  <p style={{ fontSize: '0.875rem', color: '#4b5563' }}>Premium Properties</p>
                 </div>
-              </div>
+              </motion.div>
             </div>
           </div>
           
           {/* Wave Divider */}
-          <div className="absolute bottom-0 left-0 right-0">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 120" className="w-full h-auto">
+          <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, zIndex: 10 }}>
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 120" style={{ width: '100%', height: 'auto' }}>
               <path fill="#ffffff" fillOpacity="1" d="M0,64L80,69.3C160,75,320,85,480,80C640,75,800,53,960,48C1120,43,1280,53,1360,58.7L1440,64L1440,120L1360,120C1280,120,1120,120,960,120C800,120,640,120,480,120C320,120,160,120,80,120L0,120Z"></path>
             </svg>
           </div>
@@ -279,62 +214,16 @@ const NewHomePage = () => {
               </p>
             </div>
             
-            {/* View Toggle */}
-            <div className="flex justify-center mb-8">
-              <div className="bg-gray-100 rounded-lg p-1 inline-flex">
-                <button
-                  type="button"
-                  onClick={() => setFeaturedViewMode('grid')}
-                  className={`px-4 py-2 rounded text-sm font-medium ${
-                    featuredViewMode === 'grid' 
-                      ? 'bg-white shadow-sm text-indigo-600' 
-                      : 'text-gray-600'
-                  }`}
-                >
-                  <span className="flex items-center">
-                    <i className="fa fa-th mr-2"></i>
-                    Grid View
-                  </span>
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setFeaturedViewMode('map')}
-                  className={`px-4 py-2 rounded text-sm font-medium ${
-                    featuredViewMode === 'map' 
-                      ? 'bg-white shadow-sm text-indigo-600' 
-                      : 'text-gray-600'
-                  }`}
-                >
-                  <span className="flex items-center">
-                    <Map className="h-4 w-4 mr-1" />
-                    Map View
-                  </span>
-                </button>
-              </div>
-            </div>
-            
-            {/* Map View */}
-            {featuredViewMode === 'map' && (
-              <div className="mb-12 rounded-xl overflow-hidden shadow-lg">
-                <InteractiveMap 
-                  properties={properties.filter(property => property.featured)} 
-                  height="600px" 
+            {/* Featured Properties Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {properties.filter(property => property.featured).slice(0, 3).map((property, index) => (
+                <AnimatedPropertyCard 
+                  key={property.id} 
+                  property={property} 
+                  index={index}
                 />
-              </div>
-            )}
-            
-            {/* Grid View */}
-            {featuredViewMode === 'grid' && (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                {properties.filter(property => property.featured).slice(0, 3).map((property, index) => (
-                  <AnimatedPropertyCard 
-                    key={property.id} 
-                    property={property} 
-                    index={index}
-                  />
-                ))}
-              </div>
-            )}
+              ))}
+            </div>
             
             <div className="text-center mt-12">
               <Link 
