@@ -35,9 +35,9 @@ const Footer = () => {
               <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" className="hover:text-indigo-400 transition-colors">
                 <Linkedin size={20} />
               </a>
-            </div>
+          </div>
           </motion.div>
-          
+
           {/* Quick Links */}
           <motion.div 
             initial={{ opacity: 0, y: 20 }}
@@ -93,7 +93,7 @@ const Footer = () => {
               </li>
             </ul>
           </motion.div>
-          
+
           {/* Contact Info */}
           <motion.div 
             initial={{ opacity: 0, y: 20 }}
@@ -119,7 +119,7 @@ const Footer = () => {
             </ul>
           </motion.div>
         </div>
-        
+
         {/* Bottom Section */}
         <div className="border-t border-gray-800 mt-12 pt-8">
           <div className="flex flex-col md:flex-row justify-between items-center">

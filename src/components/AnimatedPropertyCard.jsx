@@ -1,11 +1,42 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { MapPin, Heart, Phone, Mail, Star, ArrowUpRight } from 'lucide-react';
+import { MapPin, Heart, Phone, Mail, Star, ArrowUpRight, ExternalLink } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 const AnimatedPropertyCard = ({ property, index = 0 }) => {
   const [isHovered, setIsHovered] = useState(false);
   const [isLiked, setIsLiked] = useState(false);
+
+  // Helper function to check if image is from Google Drive
+  const isGoogleDriveImage = (url) => {
+    return url && (
+      url.includes('drive.google.com') || 
+      url.includes('googleusercontent.com')
+    );
+  };
+
+  // Get original Google Drive link from image URL
+  const getOriginalDriveLink = (url) => {
+    if (!url) return null;
+    
+    if (url.includes('drive.google.com/uc?export=view&id=')) {
+      const fileId = url.match(/id=([^&]+)/)?.[1];
+      if (fileId) {
+        return `https://drive.google.com/file/d/${fileId}/view`;
+      }
+    }
+    
+    return url;
+  };
+
+  // Handle clicking on an image
+  const handleImageClick = (e, imageUrl) => {
+    if (isGoogleDriveImage(imageUrl)) {
+      e.preventDefault();
+      e.stopPropagation();
+      window.open(getOriginalDriveLink(imageUrl), '_blank');
+    }
+  };
 
   // Format price for display
   const formatPrice = (price) => {
@@ -50,6 +81,9 @@ const AnimatedPropertyCard = ({ property, index = 0 }) => {
     return residentialTypes.includes(property.propertyType?.toLowerCase());
   };
 
+  const imageUrl = property.images?.[0] || '/assets/tentimage.png';
+  const isGoogleDrive = isGoogleDriveImage(imageUrl);
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 50 }}
@@ -67,14 +101,23 @@ const AnimatedPropertyCard = ({ property, index = 0 }) => {
         {/* Image */}
         <div className="relative overflow-hidden h-60">
           <motion.img
-            src={property.images?.[0] || '/assets/tentimage.png'}
+            src={imageUrl}
             alt={property.title}
             className="w-full h-full object-cover"
             initial={{ scale: 1 }}
             animate={{ scale: isHovered ? 1.1 : 1 }}
             transition={{ duration: 0.6, ease: 'easeOut' }}
+            onClick={(e) => handleImageClick(e, imageUrl)}
+            style={{ cursor: isGoogleDrive ? 'pointer' : 'default' }}
           />
           <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-b from-transparent to-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+          
+          {/* Google Drive Indicator */}
+          {isGoogleDrive && (
+            <div className="absolute top-4 right-4 bg-white bg-opacity-75 p-1 rounded-full z-10">
+              <ExternalLink size={16} className="text-indigo-600" />
+            </div>
+          )}
           
           {/* Badges */}
           <div className="absolute top-4 left-4 flex flex-col gap-2">

@@ -201,9 +201,9 @@ const NewHomePage = () => {
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 120" style={{ width: '100%', height: 'auto' }}>
               <path fill="#ffffff" fillOpacity="1" d="M0,64L80,69.3C160,75,320,85,480,80C640,75,800,53,960,48C1120,43,1280,53,1360,58.7L1440,64L1440,120L1360,120C1280,120,1120,120,960,120C800,120,640,120,480,120C320,120,160,120,80,120L0,120Z"></path>
             </svg>
-          </div>
-        </div>
-        
+                </div>
+              </div>
+              
         {/* Featured Properties Section */}
         <div className="py-20 bg-white">
           <div className="container mx-auto px-4">
@@ -223,8 +223,8 @@ const NewHomePage = () => {
                   index={index}
                 />
               ))}
-            </div>
-            
+              </div>
+              
             <div className="text-center mt-12">
               <Link 
                 to="/buy"
@@ -242,85 +242,85 @@ const NewHomePage = () => {
           <div className="absolute inset-0 z-0 opacity-20">
             <div className="absolute top-20 right-20 w-40 h-40 bg-indigo-300 rounded-full filter blur-3xl animate-blob animation-delay-4000"></div>
             <div className="absolute bottom-20 left-20 w-40 h-40 bg-blue-300 rounded-full filter blur-3xl animate-blob"></div>
-          </div>
-          
+      </div>
+      
           <div className="container mx-auto px-4 relative z-10">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
-              {/* Left Column - Illustration */}
+            {/* Left Column - Illustration */}
               <div className="flex justify-center animate-fadeInLeft">
-                <img 
-                  src="/assets/Illustration.png" 
-                  alt="Property Illustration" 
+              <img 
+                src="/assets/Illustration.png" 
+                alt="Property Illustration" 
                   className="w-full max-w-md transform transition-all duration-700 hover:-translate-y-4"
-                />
-              </div>
-              
-              {/* Right Column - Features */}
+              />
+            </div>
+            
+            {/* Right Column - Features */}
               <div className="animate-fadeInRight">
-                <div className="max-w-lg">
-                  <h2 className="text-3xl font-bold text-gray-900 mb-6">
+              <div className="max-w-lg">
+                <h2 className="text-3xl font-bold text-gray-900 mb-6">
                     Why Choose Bangalore Realtors?
-                  </h2>
+                </h2>
                   <p className="text-gray-600 mb-10">
                     We offer a seamless property experience with exclusive benefits designed for our clients.
-                  </p>
-                  
-                  {/* Features Box */}
+                </p>
+                
+                {/* Features Box */}
                   <div className="space-y-8">
-                      {/* Feature 1 */}
+                    {/* Feature 1 */}
                     <div className="flex items-start transform transition-all duration-300 hover:translate-x-2">
-                        <div className="mr-4 mt-1">
+                      <div className="mr-4 mt-1">
                         <div className="bg-indigo-100 w-12 h-12 rounded-lg flex items-center justify-center">
                           <img src="/assets/s1.png" alt="Property Insurance" className="w-8 h-8" />
                         </div>
-                        </div>
-                        <div>
-                          <h3 className="font-semibold text-lg mb-2">Property Insurance</h3>
+                      </div>
+                      <div>
+                        <h3 className="font-semibold text-lg mb-2">Property Insurance</h3>
                           <p className="text-gray-600">
                             We offer our customers property protection and liability coverage for their peace of mind.
-                            </p>
-                          </div>
-                        </div>
-                        
-                        {/* Feature 2 */}
+                        </p>
+                      </div>
+                    </div>
+                    
+                    {/* Feature 2 */}
                       <div className="flex items-start transform transition-all duration-300 hover:translate-x-2">
-                          <div className="mr-4 mt-1">
+                      <div className="mr-4 mt-1">
                           <div className="bg-indigo-100 w-12 h-12 rounded-lg flex items-center justify-center">
                             <img src="/assets/s2.png" alt="Best Price" className="w-8 h-8" />
-                          </div>
-                          </div>
-                          <div>
+                        </div>
+                      </div>
+                      <div>
                           <h3 className="font-semibold text-lg mb-2">Best Price Guarantee</h3>
                           <p className="text-gray-600">
                             Not sure what you should be charging for your property? Our market experts provide accurate valuations.
-                            </p>
-                          </div>
-                        </div>
-                        
-                        {/* Feature 3 */}
+                        </p>
+                      </div>
+                    </div>
+                    
+                    {/* Feature 3 */}
                       <div className="flex items-start transform transition-all duration-300 hover:translate-x-2">
-                          <div className="mr-4 mt-1">
+                      <div className="mr-4 mt-1">
                           <div className="bg-indigo-100 w-12 h-12 rounded-lg flex items-center justify-center">
                             <img src="/assets/s3.png" alt="Cash Back" className="w-8 h-8" />
-                            </div>
-                          </div>
-                          <div>
+                        </div>
+                      </div>
+                      <div>
                           <h3 className="font-semibold text-lg mb-2">No Commission</h3>
                           <p className="text-gray-600">
                             Unlike traditional agents, we charge no commission. Keep more money in your pocket.
                           </p>
-                        </div>
-                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
           </div>
         </div>
-        
+      </div>
+      
         {/* CTA Banner */}
         <div className="bg-indigo-600 py-16">
-          <div className="container mx-auto px-4">
+        <div className="container mx-auto px-4">
             <div className="flex flex-col md:flex-row items-center justify-between">
               <div className="mb-8 md:mb-0 text-center md:text-left">
                 <h2 className="text-3xl font-bold text-white mb-2">Ready to find your dream home?</h2>
@@ -343,11 +343,11 @@ const NewHomePage = () => {
                   <Building className="mr-2 h-5 w-5" />
                   Rent Property
                 </Link>
-              </div>
             </div>
           </div>
         </div>
-        
+      </div>
+      
         {/* How It Works */}
         <div className="bg-white py-20">
           <div className="container mx-auto px-4">
@@ -369,8 +369,8 @@ const NewHomePage = () => {
                 <p className="text-gray-600">
                   Search for properties based on your preferences, budget, and desired location.
                 </p>
-              </div>
-              
+                </div>
+                
               {/* Step 2 */}
               <div className="text-center p-6 rounded-xl bg-gradient-to-br from-gray-50 to-white shadow-sm animate-fadeInUp animation-delay-300">
                 <div className="relative mx-auto w-16 h-16 bg-indigo-100 rounded-full flex items-center justify-center mb-6">

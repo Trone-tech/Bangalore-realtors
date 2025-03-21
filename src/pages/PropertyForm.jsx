@@ -10,6 +10,11 @@ const PropertyForm = () => {
   const isEditMode = !!id;
   const { currentUser } = useAuth();
   
+  // Check if this is an admin view based on the URL path
+  const isAdminView = window.location.pathname.includes('/admin') || 
+                      window.location.pathname.includes('/add-property') || 
+                      window.location.pathname.includes('/edit-property');
+  
   const [loading, setLoading] = useState(isEditMode);
   const [error, setError] = useState(null);
   const [customAmenity, setCustomAmenity] = useState('');
@@ -200,8 +205,30 @@ const PropertyForm = () => {
   
   // Handle image URL changes
   const handleImageChange = (index, value) => {
+    // Check if it's a Google Drive link and transform it if needed
+    let transformedValue = value;
+    
+    // Detect Google Drive sharing links
+    if (value.includes('drive.google.com/file/d/')) {
+      // Extract the file ID from the Google Drive URL
+      const fileIdMatch = value.match(/\/file\/d\/([^\/]+)/);
+      if (fileIdMatch && fileIdMatch[1]) {
+        const fileId = fileIdMatch[1];
+        // Transform to direct link format
+        transformedValue = `https://drive.google.com/uc?export=view&id=${fileId}`;
+      }
+    } else if (value.includes('drive.google.com/open?id=')) {
+      // Extract the file ID from the Google Drive URL (alternative format)
+      const fileIdMatch = value.match(/id=([^&]+)/);
+      if (fileIdMatch && fileIdMatch[1]) {
+        const fileId = fileIdMatch[1];
+        // Transform to direct link format
+        transformedValue = `https://drive.google.com/uc?export=view&id=${fileId}`;
+      }
+    }
+    
     const updatedImages = [...formData.images];
-    updatedImages[index] = value;
+    updatedImages[index] = transformedValue;
     setFormData({ ...formData, images: updatedImages });
   };
   
@@ -283,19 +310,28 @@ const PropertyForm = () => {
       
       console.log("About to save property with data:", cleanedData);
       
+      // Determine if this is an admin submission or a public submission
+      const isAdminSubmission = currentUser && isAdminView;
+      
       // Save the property
       if (isEditMode) {
         console.log(`Updating property with ID: ${id}`);
         const updatedProperty = await adminService.updateProperty(id, cleanedData);
         console.log("Property updated successfully:", updatedProperty);
-      } else {
-        console.log("Creating new property");
+        navigate('/admin/dashboard');
+      } else if (isAdminSubmission) {
+        // Admin is creating a new property - directly add to properties
+        console.log("Admin creating new property");
         const newProperty = await adminService.createProperty(cleanedData);
-        console.log("Property created successfully:", newProperty);
+        console.log("Property created successfully by admin:", newProperty);
+        navigate('/admin/dashboard');
+      } else {
+        // Public user is submitting a property - add to pending properties
+        console.log("User submitting property for approval");
+        const pendingProperty = await adminService.createPendingProperty(cleanedData);
+        console.log("Property submitted for approval:", pendingProperty);
+        navigate('/property-submission-success');
       }
-      
-      console.log("Navigating to dashboard");
-      navigate('/admin/dashboard');
     } catch (err) {
       console.error('Error saving property:', err);
       setError(err.message || 'Failed to save property. Please try again.');
@@ -318,15 +354,25 @@ const PropertyForm = () => {
         {/* Header */}
         <div className="mb-6 flex items-center justify-between">
           <div>
-            <button
-              onClick={() => navigate('/admin/dashboard')}
-              className="inline-flex items-center text-indigo-600 hover:text-indigo-900"
-            >
-              <ArrowLeft size={18} className="mr-1" />
-              <span>Back to Dashboard</span>
-            </button>
+            {isAdminView ? (
+              <button
+                onClick={() => navigate('/admin/dashboard')}
+                className="inline-flex items-center text-indigo-600 hover:text-indigo-900"
+              >
+                <ArrowLeft size={18} className="mr-1" />
+                <span>Back to Dashboard</span>
+              </button>
+            ) : (
+              <button
+                onClick={() => navigate('/')}
+                className="inline-flex items-center text-indigo-600 hover:text-indigo-900"
+              >
+                <ArrowLeft size={18} className="mr-1" />
+                <span>Back to Home</span>
+              </button>
+            )}
             <h1 className="text-2xl font-bold text-gray-900 mt-2">
-              {isEditMode ? 'Edit Property' : 'Add New Property'}
+              {isEditMode ? 'Edit Property' : (isAdminView ? 'Add New Property' : 'Sell Your Property')}
             </h1>
           </div>
         </div>
@@ -868,7 +914,7 @@ const PropertyForm = () => {
                     value={url}
                     onChange={(e) => handleImageChange(index, e.target.value)}
                     className="flex-grow p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                    placeholder="Enter image URL (e.g., /assets/1.png)"
+                    placeholder="Enter image URL or Google Drive link"
                   />
                   <button
                     type="button"
@@ -891,7 +937,14 @@ const PropertyForm = () => {
               </button>
               
               <div className="text-sm text-gray-500 mt-2">
-                <p>Note: Use relative paths like "/assets/1.png" or full URLs. For testing, you can use "/assets/tentimage.png".</p>
+                <p>How to use Google Drive images:</p>
+                <ul className="list-disc pl-5 mt-1 space-y-1">
+                  <li>Upload your image to Google Drive</li>
+                  <li>Right-click the image and select "Share"</li>
+                  <li>Change permission to "Anyone with the link"</li>
+                  <li>Copy the link and paste it here - it will be automatically converted to work properly</li>
+                  <li>Images will be clickable on the property details page to view the original file</li>
+                </ul>
               </div>
             </div>
           </div>
@@ -908,7 +961,9 @@ const PropertyForm = () => {
               <Save size={18} className="mr-2" />
               {loading 
                 ? (isEditMode ? 'Updating...' : 'Creating...') 
-                : (isEditMode ? 'Update Property' : 'Create Property')}
+                : (isEditMode 
+                   ? 'Update Property' 
+                   : (isAdminView ? 'Create Property' : 'Submit Property for Approval'))}
             </button>
           </div>
         </form>

@@ -17,7 +17,7 @@ interface NavLink {
 export const NavLinks: NavLink[] = [
   { label: 'Rent', path: '/rent' },
   { label: 'Buy', path: '/buy' },
-  { label: 'Sell', path: '/admin/properties/new' },
+  { label: 'Sell', path: '/sell' },
   { label: 'About Us', path: '/about' },
   { label: 'Admin', path: '/admin/dashboard' }
 ]; 

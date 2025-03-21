@@ -1,7 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { MapPin, ArrowLeft, Loader, Heart } from 'lucide-react';
+import { MapPin, ArrowLeft, Loader, Heart, ExternalLink } from 'lucide-react';
 import { propertyService } from '../services/propertyService';
+import { adminService } from '../services/adminService';
+import { useAuth } from '../contexts/AuthContext';
+import { ref, get } from 'firebase/database';
+import { database } from '../firebase';
 
 const PropertyDetails = () => {
   const { id } = useParams();
@@ -9,6 +13,37 @@ const PropertyDetails = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [activeImage, setActiveImage] = useState(0);
+  const [isPendingProperty, setIsPendingProperty] = useState(false);
+  const { currentUser } = useAuth();
+  
+  // Helper function to check if image is from Google Drive
+  const isGoogleDriveImage = (url) => {
+    return url && (
+      url.includes('drive.google.com') || 
+      url.includes('googleusercontent.com')
+    );
+  };
+
+  // Get original Google Drive link from image URL
+  const getOriginalDriveLink = (url) => {
+    if (!url) return null;
+    
+    if (url.includes('drive.google.com/uc?export=view&id=')) {
+      const fileId = url.match(/id=([^&]+)/)?.[1];
+      if (fileId) {
+        return `https://drive.google.com/file/d/${fileId}/view`;
+      }
+    }
+    
+    return url;
+  };
+
+  // Handle clicking on an image
+  const handleImageClick = (imageUrl) => {
+    if (isGoogleDriveImage(imageUrl)) {
+      window.open(getOriginalDriveLink(imageUrl), '_blank');
+    }
+  };
   
   useEffect(() => {
     const fetchProperty = async () => {
@@ -16,7 +51,26 @@ const PropertyDetails = () => {
       setError(null);
       
       try {
-        const propertyData = await propertyService.getPropertyById(id);
+        // First try to get from regular properties
+        let propertyData = await propertyService.getPropertyById(id);
+        
+        // If not found and user is admin, check pending properties
+        if (!propertyData && currentUser) {
+          try {
+            // Check pending properties using adminService instead
+            const pendingProperty = await adminService.getPendingPropertyById(id);
+            
+            if (pendingProperty) {
+              propertyData = { 
+                ...pendingProperty,
+                isPending: true 
+              };
+              setIsPendingProperty(true);
+            }
+          } catch (pendingError) {
+            console.error('Error checking pending properties:', pendingError);
+          }
+        }
         
         if (propertyData) {
           setProperty(propertyData);
@@ -32,7 +86,7 @@ const PropertyDetails = () => {
     };
     
     fetchProperty();
-  }, [id]);
+  }, [id, currentUser]);
   
   // Format price for display
   const formatPrice = (price) => {
@@ -138,19 +192,37 @@ const PropertyDetails = () => {
       <div className="container mx-auto px-4 py-8 max-w-5xl">
         {/* Back Button */}
         <div className="mb-6">
-          <Link
-            to="/browse"
-            className="inline-flex items-center text-indigo-600 hover:text-indigo-800"
-          >
-            <ArrowLeft size={18} className="mr-1" />
-            <span>Back to Browse</span>
-          </Link>
+          {isPendingProperty && currentUser ? (
+            <Link
+              to="/admin/dashboard"
+              className="inline-flex items-center text-indigo-600 hover:text-indigo-800"
+            >
+              <ArrowLeft size={18} className="mr-1" />
+              <span>Back to Admin Dashboard</span>
+            </Link>
+          ) : (
+            <Link
+              to="/browse"
+              className="inline-flex items-center text-indigo-600 hover:text-indigo-800"
+            >
+              <ArrowLeft size={18} className="mr-1" />
+              <span>Back to Browse</span>
+            </Link>
+          )}
         </div>
         
         {/* Property Header */}
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-gray-900 mb-2">{propertyData.title}</h1>
           <p className="text-gray-600 mb-4">{propertyData.subtitle}</p>
+          
+          {/* Show pending status for admin preview */}
+          {isPendingProperty && currentUser && (
+            <div className="bg-amber-100 border border-amber-300 text-amber-800 px-4 py-3 rounded mb-4 flex items-center">
+              <span className="mr-2">⚠️</span>
+              <span>This property is pending approval and not visible to the public yet.</span>
+            </div>
+          )}
         </div>
 
         {/* Contact Information - Moved to top with enhanced design */}
@@ -286,7 +358,14 @@ const PropertyDetails = () => {
               src={propertyData.images?.[activeImage] || '/assets/tentimage.png'}
               alt={propertyData.title}
               className="w-full h-full object-cover"
+              onClick={() => handleImageClick(propertyData.images?.[activeImage])}
+              style={{ cursor: isGoogleDriveImage(propertyData.images?.[activeImage]) ? 'pointer' : 'default' }}
             />
+            {isGoogleDriveImage(propertyData.images?.[activeImage]) && (
+              <div className="absolute top-2 right-2 bg-white bg-opacity-75 p-1 rounded-md">
+                <ExternalLink size={18} className="text-indigo-600" />
+              </div>
+            )}
           </div>
         </div>
         
@@ -295,7 +374,7 @@ const PropertyDetails = () => {
           {propertyData.images?.map((image, index) => (
             <div 
               key={index}
-              className={`h-20 bg-gray-200 rounded-lg overflow-hidden cursor-pointer ${
+              className={`relative h-20 bg-gray-200 rounded-lg overflow-hidden cursor-pointer ${
                 activeImage === index ? 'ring-2 ring-indigo-600' : ''
               }`}
               onClick={() => setActiveImage(index)}
@@ -305,6 +384,11 @@ const PropertyDetails = () => {
                 alt={`${propertyData.title} - Image ${index + 1}`}
                 className="w-full h-full object-cover"
               />
+              {isGoogleDriveImage(image) && (
+                <div className="absolute top-1 right-1 bg-white bg-opacity-75 p-0.5 rounded-md">
+                  <ExternalLink size={12} className="text-indigo-600" />
+                </div>
+              )}
             </div>
           ))}
         </div>
@@ -394,7 +478,7 @@ const PropertyDetails = () => {
           <p className="text-gray-600 mb-4">Landmark: {propertyData.address.landmark}</p>
           
           {/* Google Maps Link */}
-          <div className="mb-4">
+          <div>
             <a 
               href={propertyData.mapLink || `https://www.google.com/maps/search/${encodeURIComponent(propertyData.address.full)}`} 
               target="_blank" 
@@ -404,11 +488,6 @@ const PropertyDetails = () => {
               <MapPin className="h-4 w-4 mr-2" />
               View on Google Maps
             </a>
-          </div>
-          
-          {/* Static Image */}
-          <div className="mt-4 h-64 bg-gray-100 rounded-lg overflow-hidden">
-            <img src="/assets/static-map.png" alt="Static Map" className="w-full h-full object-cover" />
           </div>
         </div>
       </div>

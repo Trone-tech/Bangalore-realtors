@@ -13,6 +13,7 @@ import AdminDashboard from './pages/AdminDashboard.jsx';
 import PropertyForm from './pages/PropertyForm.jsx';
 import ProtectedRoute from './components/ProtectedRoute.jsx';
 import { AuthProvider } from './contexts/AuthContext.jsx';
+import PropertySubmissionSuccess from './pages/PropertySubmissionSuccess.jsx';
 
 const App = () => {
   useEffect(() => {
@@ -31,6 +32,8 @@ const App = () => {
             <Route path="/rent" element={<RentProperties />} />
             <Route path="/property/:id" element={<PropertyDetails />} />
             <Route path="/about" element={<AboutUs />} />
+            <Route path="/sell" element={<PropertyForm />} />
+            <Route path="/property-submission-success" element={<PropertySubmissionSuccess />} />
             
             {/* Admin Routes */}
             <Route path="/admin/login" element={<AdminLogin />} />

@@ -220,18 +220,18 @@ const BrowseProperties = () => {
             </div>
             
             <div className="p-4 flex-grow overflow-y-auto">
-              <form onSubmit={handleSearch} className="space-y-6">
+          <form onSubmit={handleSearch} className="space-y-6">
                 {/* Mobile search input */}
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
                     Location
                   </label>
                   <div className="flex">
-                    <input
-                      type="text"
+                <input
+                  type="text"
                       placeholder="Search by location..."
-                      value={searchInput}
-                      onChange={(e) => setSearchInput(e.target.value)}
+                  value={searchInput}
+                  onChange={(e) => setSearchInput(e.target.value)}
                       className="p-2 flex-grow border border-gray-300 rounded-l-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
                     />
                     <button
@@ -325,33 +325,33 @@ const BrowseProperties = () => {
                       className="pl-10 p-3 w-full border border-gray-300 rounded-md"
                     />
                   </div>
-                </div>
-                
-                <div className="flex gap-2">
-                  <button
-                    type="button"
-                    onClick={() => setShowFilters(!showFilters)}
-                    className="px-6 py-3 bg-gray-100 text-gray-700 rounded-md hover:bg-gray-200 flex items-center gap-2"
-                  >
-                    <Filter size={18} />
-                    <span>Filters</span>
-                  </button>
-                  
-                  <button
-                    type="submit"
-                    className="px-6 py-3 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 flex items-center gap-2"
-                  >
-                    <Search size={18} />
-                    <span>Search</span>
-                  </button>
-                </div>
               </div>
               
+              <div className="flex gap-2">
+                <button
+                  type="button"
+                  onClick={() => setShowFilters(!showFilters)}
+                    className="px-6 py-3 bg-gray-100 text-gray-700 rounded-md hover:bg-gray-200 flex items-center gap-2"
+                >
+                  <Filter size={18} />
+                  <span>Filters</span>
+                </button>
+                
+                <button
+                  type="submit"
+                  className="px-6 py-3 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 flex items-center gap-2"
+                >
+                  <Search size={18} />
+                  <span>Search</span>
+                </button>
+              </div>
+            </div>
+            
               {/* Zone Dropdown - Multi-Select */}
               <div className="mt-4">
                 <div className="relative">
-                  <button 
-                    type="button"
+                <button
+                  type="button"
                     onClick={() => setShowZoneDropdown(!showZoneDropdown)}
                     className="w-full p-3 border border-gray-300 rounded-md bg-white flex justify-between items-center"
                   >
@@ -363,7 +363,7 @@ const BrowseProperties = () => {
                           : `${filters.zones.length} zones selected`}
                     </span>
                     <ChevronDown size={16} className={`transform transition-transform ${showZoneDropdown ? 'rotate-180' : ''}`} />
-                  </button>
+                </button>
                   
                   {showZoneDropdown && (
                     <div className="absolute z-10 mt-1 w-full rounded-md bg-white shadow-lg">
@@ -382,17 +382,17 @@ const BrowseProperties = () => {
                               {filters.zones.includes(region.value) && (
                                 <Check size={14} className="text-white" />
                               )}
-                            </div>
+                  </div>
                             <span>{region.label}</span>
-                          </div>
+                  </div>
                         ))}
-                      </div>
-                    </div>
+                  </div>
+                </div>
                   )}
                 </div>
               </div>
-            </form>
-          </div>
+          </form>
+        </div>
           
           {/* Active Filters Display */}
           <div className="mb-6 flex flex-wrap gap-2">
@@ -407,39 +407,39 @@ const BrowseProperties = () => {
                 </button>
               </span>
             ))}
-          </div>
-          
-          {/* Properties Grid */}
+        </div>
+        
+        {/* Properties Grid */}
           <div className="mb-12">
-            {loading ? (
-              <div className="flex justify-center items-center py-12">
-                <Loader size={24} className="animate-spin text-indigo-600 mr-2" />
-                <span>Loading properties...</span>
-              </div>
-            ) : error ? (
-              <div className="bg-red-50 p-4 rounded-md text-red-800 mb-6">
-                <p>{error}</p>
-              </div>
-            ) : properties.length === 0 ? (
-              <div className="bg-white rounded-lg shadow-sm p-12 text-center">
-                <h3 className="text-xl font-semibold text-gray-800 mb-2">No properties found</h3>
-                <p className="text-gray-600 mb-6">
-                  We couldn't find any properties matching your search criteria.
-                </p>
-                <button
-                  onClick={resetFilters}
-                  className="px-6 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700"
-                >
-                  Reset Filters
-                </button>
-              </div>
-            ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {loading ? (
+          <div className="flex justify-center items-center py-12">
+            <Loader size={24} className="animate-spin text-indigo-600 mr-2" />
+            <span>Loading properties...</span>
+          </div>
+        ) : error ? (
+          <div className="bg-red-50 p-4 rounded-md text-red-800 mb-6">
+            <p>{error}</p>
+          </div>
+        ) : properties.length === 0 ? (
+          <div className="bg-white rounded-lg shadow-sm p-12 text-center">
+            <h3 className="text-xl font-semibold text-gray-800 mb-2">No properties found</h3>
+            <p className="text-gray-600 mb-6">
+              We couldn't find any properties matching your search criteria.
+            </p>
+            <button
+              onClick={resetFilters}
+              className="px-6 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700"
+            >
+              Reset Filters
+            </button>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {properties.map((property, index) => (
                   <AnimatedPropertyCard key={property.id} property={property} index={index} />
-                ))}
-              </div>
-            )}
+            ))}
+          </div>
+        )}
           </div>
         </div>
       </div>
